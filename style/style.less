@@ -1,0 +1,200 @@
+@primary-color: #99d033;
+@font-family: "Open Sans", Helvetica, Arial, sans-serif;
+
+@white: #FFFFFF;
+@black: #000000;
+
+@background: #F5F7FA;
+
+@text: #2c2e2f;
+@text-button: #6B737C;
+@grey: #9CA3A6;
+@dark: #333333;
+@border: #9da3a6;
+@border-light: #D4DADE;
+@blue: #0070ba;
+@blue-light: #ACD5ED;
+@blue-icon: #0D79B1;
+@blue-secondary: #1546a0;
+
+@gradient: linear-gradient(100deg, @blue, @blue-secondary);
+
+@green: #2b8a3e;
+@teal: #087f5b;
+@cyan: #0b7285;
+@grape: #862e9c;
+@red: #c92a2a;
+@gray: #212529;
+
+#map {
+    width:       65%;
+    height:      580px;
+    margin-left: 34%;
+    p {
+        margin-top:    5px;
+        margin-bottom: 5px;
+    }
+}
+
+.map-control {
+    margin-bottom: 10px;
+    float:         left;
+    width:         34%;
+    font-family:   @font-family;
+    font-size:     14px;
+    h2, h3, h4, h5, h6 {
+        margin-bottom: 5px;
+        &:first-child {
+            margin-top: 0;
+        }
+        
+    }
+    button {
+        padding:     6px 10px;
+        font-family: @font-family;
+        border:      1px solid fade(black, 10%);
+        cursor:      pointer;
+        outline:     none;
+        background:  @primary-color;
+        color:       #222222;
+        &:hover {
+            background: lighten(@primary-color, 7%);
+        }
+        &.loading, &:active {
+            background: #f0f0f0;
+            color:      #999999;
+            cursor:     default;
+        }
+        &.reload {
+            margin-top: 20px;
+        }
+    }
+    #log {
+        color:          #999999;
+        display:        inline-block;
+        vertical-align: middle;
+        margin-left:    10px;
+    }
+    label {
+        display:        inline-block;
+        margin:         0 15px 0 3px;
+        vertical-align: top;
+    }
+    input[type="checkbox"], label {
+        cursor: pointer;
+    }
+    #date-range {
+        margin: 10px 0;
+        //~ span {
+        //    min-width: 90px;
+        //    display:   inline-block;
+        //}
+        ~ input {
+            margin-bottom: 5px;
+            padding:       8px 7px 7px;
+            border:        1px solid #999999;
+            &:focus, &:active {
+                border: 1px solid #2196f3;
+            }
+        }
+    }
+    
+}
+
+.ui-widget {
+    font-family: @font-family;
+}
+
+.ui-widget-header .ui-icon {
+    background-image: none;
+}
+
+.ui-datepicker table {
+    font-family: @font-family;
+    font-size:   13px;
+    font-weight: bold;
+}
+
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
+    font-weight: bold;
+}
+
+.ui-datepicker {
+    width:   340px;
+    padding: 10px 10px 5px;
+    .ui-datepicker-header {
+        color:       @text;
+        font-weight: 400;
+        font-size:   17px;
+    }
+    .ui-datepicker-prev span {
+        box-shadow:  inset 1px -1px @text;
+        margin-left: -3px;
+    }
+    .ui-datepicker-next span {
+        box-shadow:  inset -1px 1px @text;
+        margin-left: -9px;
+    }
+    .ui-datepicker-prev, .ui-datepicker-next {
+        cursor: pointer;
+        span {
+            transform: rotate(45deg);
+            width:     12px;
+            height:    12px;
+        }
+    }
+    th {
+        color: @grey;
+    }
+    td {
+        padding: 0 1px 1px 0;
+        .ui-state-highlight {
+            background: @teal !important;
+            color:      @white !important;
+        }
+        .ui-state-default {
+            color:         @grey;
+            box-sizing:    border-box;
+            border-radius: 0;
+            line-height:   35px;
+            padding: 3px;
+            &:hover, &.is-active {
+                background: @blue;
+                color:      @white;
+            }
+            
+        }
+        .ui-state-active {
+            //border-radius: 0;
+            background: @blue-light;
+            //background: lighten(@cyan, 20%);
+            color:      @dark;
+        }
+    }
+    .selected-start:not(.selected-end),
+    .selected-end:not(.selected-start),
+    .selected-start.selected-end {
+        a {
+            background: @blue;
+            color:      @white;
+        }
+    }
+    .selected.first-of-month:not(.selected-start) a {
+        border-left:  2px dotted #d4e7f6;
+        padding-left: 1px;
+    }
+    .selected.last-of-month:not(.selected-end) a {
+        border-right:  2px dotted #d4e7f6;
+        padding-right: 1px;
+    }
+    .ui-datepicker-week-end .ui-state-default {
+        color: @red;
+    }
+}
+
+.chosen-container {
+    vertical-align: top;
+    min-width:      48%;
+}
