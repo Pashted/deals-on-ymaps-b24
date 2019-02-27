@@ -1,3 +1,16 @@
+@import "../node_modules/uikit/src/less/components/_import";
+
+@internal-nav-parent-close-image:               "../node_modules/uikit/src/images/backgrounds/nav-parent-close.svg";
+@internal-nav-parent-open-image:                "../node_modules/uikit/src/images/backgrounds/nav-parent-open.svg";
+@internal-form-select-image:                     "../node_modules/uikit/src/images/backgrounds/form-select.svg";
+@internal-form-radio-image:                      "../node_modules/uikit/src/images/backgrounds/form-radio.svg";
+@internal-form-checkbox-image:                   "../node_modules/uikit/src/images/backgrounds/form-checkbox.svg";
+@internal-form-checkbox-indeterminate-image:     "../node_modules/uikit/src/images/backgrounds/form-checkbox-indeterminate.svg";
+@internal-list-bullet-image:                    "../node_modules/uikit/src/images/backgrounds/list-bullet.svg";
+@internal-divider-icon-image:                   "../node_modules/uikit/src/images/backgrounds/divider-icon.svg";
+@global-font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+
 @primary-color: #99d033;
 @font-family: "Open Sans", Helvetica, Arial, sans-serif;
 
@@ -47,27 +60,29 @@
         &:first-child {
             margin-top: 0;
         }
-        
     }
     button {
-        padding:     6px 10px;
-        font-family: @font-family;
-        border:      1px solid fade(black, 10%);
-        cursor:      pointer;
-        outline:     none;
-        background:  @primary-color;
-        color:       #222222;
-        &:hover {
-            background: lighten(@primary-color, 7%);
-        }
-        &.loading, &:active {
-            background: #f0f0f0;
-            color:      #999999;
-            cursor:     default;
-        }
+        //padding:     6px 10px;
+        //font-family: @font-family;
+        //cursor:      pointer;
+        //outline:     none;
+        //border:      1px solid fade(black, 10%);
         &.reload {
-            margin-top: 20px;
+            //margin-top: 20px;
+            //background: @primary-color;
+            //color:      #222222;
+            //&:hover {
+            //    background: lighten(@primary-color, 7%);
+            //}
+            &.loading, &:active {
+                background: #f0f0f0;
+                color:      #999999;
+                cursor:     default;
+            }
         }
+    }
+    .uk-icon {
+        vertical-align: text-top;
     }
     #log {
         color:          #999999;
@@ -159,7 +174,7 @@
             box-sizing:    border-box;
             border-radius: 0;
             line-height:   35px;
-            padding: 3px;
+            padding:       3px;
             &:hover, &.is-active {
                 background: @blue;
                 color:      @white;
