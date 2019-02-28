@@ -1,6 +1,8 @@
-let crm = `https://${BX24.getDomain()}/crm`,
+let crm = `https://${BX24.getDomain()}/crm`, // алрес CRM Bitrix24
+    entity_id = 'intelsdom3', // имя хранилища для хранения настроек модуля в crm
     statuses = {},
-    deals_status_list = $('#select-deals-status');
+    deals_status_list = $('#select-deals-status'),
+    user_settings;
 
 // TODO: очищать в href контакта лишние символы регуляркой
 // TODO: сделать показ более 50 контактов на одной карте, либо показывать сообщение вместо undefined в контактах, которые есть, но не были получены
@@ -98,21 +100,21 @@ map.on({
                         // Поле "адрес google"
                         let address = el.UF_CRM_5C07A1C53EAA9.split('|')[0],
                             dot = {
-                                "type":     "Feature",
-                                "id":       el.ID,
-                                "geometry": {"type": "Point"},
-                                "icon":     "darkGreenDotIcon",
-                                "address":  address,
+                                "type":       "Feature",
+                                "id":         el.ID,
+                                "geometry":   {"type": "Point"},
+                                "icon":       "darkGreenDotIcon",
+                                "address":    address,
                                 "properties": {
-                                    'iconCaption': `${el.TITLE}, ID ${el.ID}`,
-                                    'clusterCaption': `${el.TITLE}, ID ${el.ID}`,
+                                    'iconCaption':          `${el.TITLE}, ID ${el.ID}`,
+                                    'clusterCaption':       `${el.TITLE}, ID ${el.ID}`,
                                     'balloonContentHeader': `${el.TITLE}, ID ${el.ID}`,
-                                    'balloonContentBody': `<p><a href="${crm}/deal/details/${el.ID}/" target="_blank">Открыть сделку в новом окне</a></p>
+                                    'balloonContentBody':   `<p><a href="${crm}/deal/details/${el.ID}/" target="_blank">Открыть сделку в новом окне</a></p>
                                     <p style="color:#1bad03"><b>Стадия сделки:</b> ${statuses[el.STAGE_ID] !== undefined ? statuses[el.STAGE_ID] : el.STAGE_ID}</p>
                                     <p><b>Адрес:</b> ${address}</p>
                                     <p><b>Дата сделки:</b> ${format_date(el.UF_CRM_5C07A1C52D5CF)}</p>`,
                                 },
-                                "contact":  el.CONTACT_ID
+                                "contact":    el.CONTACT_ID
                             };
 
                         dots.push(dot);
@@ -174,15 +176,56 @@ map.on({
     }
 });
 
+settings.on({
+    init() {
+
+        console.log('settings.init START');
+        BX24.callMethod(
+            "entity.get",
+            {"ENTITY": entity_id},
+            function (result) {
+                if (result.error()) {
+                    if (result.answer.error === "ERROR_ENTITY_NOT_FOUND")
+                        settings.trigger('create');
+
+                } else {
+                    user_settings = result.data();
+                    console.log('user_settings', user_settings);
+
+                    control.trigger("init");
+
+                    ymaps.ready(() => {
+                        map.trigger('init');
+                        deals_status_list.trigger('bx_update');
+                    });
+                }
+            }
+        );
+    },
+    create() {
+        console.log('settings.create START');
+        BX24.callMethod('entity.add', {
+            'ENTITY': entity_id,
+            'NAME':   'Deals on map - settings',
+            'ACCESS': {
+                U1: 'W',
+                AU: 'R'
+            }
+        }, (result) => {
+            settings.trigger('init');
+        });
+    },
+    delete() {
+        console.log('settings.delete START');
+
+        BX24.callMethod('entity.delete', {'ENTITY': entity_id}, (result) => {
+            console.log('settings.delete END', result);
+        });
+    }
+});
 
 BX24.init(function () {
 
-    control.trigger("init");
-
-    ymaps.ready(() => {
-        map.trigger('init');
-        deals_status_list.trigger('bx_update');
-    });
-
+    settings.trigger('init');
 
 });

@@ -4,6 +4,7 @@ let control = $('.map-control'),
     end = $('[name="endDate"]'),
     reload_btn = control.find('.reload'),
     log = control.find('#log'),
+    settings = $('#dealsonmap-settings'),
 
     format_date = (timestamp) => {
         let date = new Date(timestamp),
@@ -103,5 +104,27 @@ control.on({
             reload_btn.removeClass('loading');
         });
         date_filter.filter('[value="today"]').click();
+
+        /**
+         * Модальное окно
+         */
+        settings.on({
+            'show.uk.modal': () => {
+                console.log("Modal is visible.");
+                console.log('user_settings', user_settings);
+            },
+            'hide.uk.modal': () => {
+                console.log("Element is not visible.");
+            }
+        });
+
+        $('.reset-settings').on({
+            click() {
+                UIkit.modal.confirm('Вы действительно хотите удалить все настройки модуля?', {stack: true}).then(() => settings.trigger('delete'), () => {
+                    console.log('reset promise rejected');
+                });
+            }
+
+        });
     }
 });

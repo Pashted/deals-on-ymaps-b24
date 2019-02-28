@@ -34,7 +34,6 @@ let myMap, objectManager,
         myMap.geoObjects.add(objectManager);
 
 
-
         objectManager.add({
             "type":     "FeatureCollection",
             "features": dots
@@ -71,9 +70,9 @@ map.on({
 
         objectManager = new ymaps.ObjectManager({
             // Чтобы метки начали кластеризоваться, выставляем опцию.
-            clusterize:              true,
+            clusterize: true,
             // ObjectManager принимает те же опции, что и кластеризатор.
-            gridSize:                32,
+            gridSize:   32,
             // clusterDisableClickZoom: true
         });
 
