@@ -146,18 +146,23 @@ settings.on({
 
         // .then(after_add => settings.trigger('init'));
     },
-    create() {
-
-    },
-    delete() {
+    reset() {
 
         b24.entity_delete()
             .then(() => {
                 user_settings = {};
-                console.log('user_settings', user_settings);
+
+                b24.entity_add()
+                    .then(b24.item_add)
+                    .then(b24.item_get)
+                    .then((result) => {
+                        user_settings = result[0];
+                        console.log('user_settings', user_settings);
+                    }, (error) => alert(`Произошла ошибка ${error}. Обратитесь в тех. поддержку.`));
+
             });
     },
-    write() {
+    save() {
 
     },
     crm_fields() {

@@ -130,7 +130,7 @@ control.on({
 
         settings.find('.reset-settings').click(
             () => UIkit.modal.confirm('Это действие невозможно отменить. Вы действительно хотите удалить все настройки модуля?', {stack: true})
-                .then(() => settings.trigger('delete'), () => console.log('reset promise rejected'))
+                .then(() => settings.trigger('reset'), () => console.log('reset promise rejected'))
         );
     }
 });
