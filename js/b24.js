@@ -1,8 +1,7 @@
 let crm = `https://${BX24.getDomain()}/crm`, // алрес CRM Bitrix24
-    entity_id = 'intelsdom3', // имя хранилища для хранения настроек модуля в crm
+    entity_id = 'intelsdom', // имя хранилища для хранения настроек модуля в crm
     statuses = {},
-    deals_status_list = $('#select-deals-status'),
-    user_settings;
+    deals_status_list = $('#select-deals-status');
 
 // TODO: очищать в href контакта лишние символы регуляркой
 // TODO: сделать показ более 50 контактов на одной карте, либо показывать сообщение вместо undefined в контактах, которые есть, но не были получены
@@ -41,8 +40,6 @@ deals_status_list.on({
 
 map.on({
     bx_set_deals() {
-        // TODO: реализовать фильтрацию по статусу сделки на уровне карт https://tech.yandex.ru/maps/doc/jsapi/2.1/ref/reference/ObjectManager-docpage/#method_detail__setFilter
-
         /**
          * фильтр 3 по полю start_date
          */
@@ -176,53 +173,6 @@ map.on({
     }
 });
 
-settings.on({
-    init() {
-
-        console.log('settings.init START');
-        BX24.callMethod(
-            "entity.get",
-            {"ENTITY": entity_id},
-            function (result) {
-                if (result.error()) {
-                    if (result.answer.error === "ERROR_ENTITY_NOT_FOUND")
-                        settings.trigger('create');
-
-                } else {
-                    user_settings = result.data();
-                    console.log('user_settings', user_settings);
-
-                    control.trigger("init");
-
-                    ymaps.ready(() => {
-                        map.trigger('init');
-                        deals_status_list.trigger('bx_update');
-                    });
-                }
-            }
-        );
-    },
-    create() {
-        console.log('settings.create START');
-        BX24.callMethod('entity.add', {
-            'ENTITY': entity_id,
-            'NAME':   'Deals on map - settings',
-            'ACCESS': {
-                U1: 'W',
-                AU: 'R'
-            }
-        }, (result) => {
-            settings.trigger('init');
-        });
-    },
-    delete() {
-        console.log('settings.delete START');
-
-        BX24.callMethod('entity.delete', {'ENTITY': entity_id}, (result) => {
-            console.log('settings.delete END', result);
-        });
-    }
-});
 
 BX24.init(function () {
 

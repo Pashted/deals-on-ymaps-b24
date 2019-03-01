@@ -4,7 +4,6 @@ let control = $('.map-control'),
     end = $('[name="endDate"]'),
     reload_btn = control.find('.reload'),
     log = control.find('#log'),
-    settings = $('#dealsonmap-settings'),
 
     format_date = (timestamp) => {
         let date = new Date(timestamp),
@@ -42,7 +41,7 @@ control.on({
         /**
          * Выпадающие списки
          */
-        $("select").chosen({
+        control.find("select").chosen({
             no_results_text: "Ничего не найдено!",
             width:           "97%"
         });
@@ -110,21 +109,28 @@ control.on({
          */
         settings.on({
             'show.uk.modal': () => {
-                console.log("Modal is visible.");
                 console.log('user_settings', user_settings);
+                settings.trigger('crm_fields');
             },
             'hide.uk.modal': () => {
-                console.log("Element is not visible.");
             }
         });
 
-        $('.reset-settings').on({
-            click() {
-                UIkit.modal.confirm('Вы действительно хотите удалить все настройки модуля?', {stack: true}).then(() => settings.trigger('delete'), () => {
-                    console.log('reset promise rejected');
-                });
-            }
+        settings.find('.api-settings [type=radio]').on({
+            change() {
+                if ($(this).val() === '1')
+                    settings.find('.api-settings [type=text]').prop('disabled', false).focus();
+                else
+                    settings.find('.api-settings [type=text]').prop('disabled', true);
 
+            }
         });
+
+        settings.find('.save-settings').click(() => settings.trigger('save'));
+
+        settings.find('.reset-settings').click(
+            () => UIkit.modal.confirm('Это действие невозможно отменить. Вы действительно хотите удалить все настройки модуля?', {stack: true})
+                .then(() => settings.trigger('delete'), () => console.log('reset promise rejected'))
+        );
     }
 });

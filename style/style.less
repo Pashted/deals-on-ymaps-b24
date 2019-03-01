@@ -118,6 +118,20 @@
     
 }
 
+.uk-modal {
+    
+    form {
+        [type=radio] {
+            &:not(:first-child) {
+                margin-left: 30px;
+            }
+            //&:not(:checked) + label + [type=text] {
+            //    display: none;
+            //}
+        }
+    }
+}
+
 .ui-widget {
     font-family: @font-family;
 }
