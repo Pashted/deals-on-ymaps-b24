@@ -9,7 +9,7 @@ let settings = $('#dealsonmap-settings'),
                     "entity.get",
                     {"ENTITY": entity_id},
                     res => {
-                        console.log('entity.get RESULT', res.data());
+                        console.log('b24.entity_get RESULT', res.data());
 
                         if (res.error()) {
                             if (res.answer.error === "ERROR_ENTITY_NOT_FOUND")
@@ -71,12 +71,19 @@ let settings = $('#dealsonmap-settings'),
                         ID:               'ASC'
                     }
                 }, res => {
-                    console.log('b24.item_get RESULT', res.data());
+                    let data = res.data();
+                    console.log('b24.item_get RESULT', data);
 
-                    if (res.data().length)
-                        resolve(res.data());
-                    else
+                    if (data.length) {
+                        user_settings = JSON.parse(data[0].DETAIL_TEXT);
+                        user_settings.id = data[0].ID;
+
+                        console.log('USER_SETTINGS', user_settings);
+
+                        resolve();
+                    } else {
                         console.log('b24.item_get ERROR', res);
+                    }
                 });
             });
         },
@@ -104,22 +111,25 @@ let settings = $('#dealsonmap-settings'),
             });
         },
 
-        item_update() {
+        item_update(data) {
             console.log('b24.item_update START');
 
             return new Promise(resolve => {
                 BX24.callMethod('entity.item.update', {
                     ENTITY:           entity_id,
-                    ID:               user_settings.ID,
+                    ID:               user_settings.id,
                     DATE_ACTIVE_FROM: new Date(),
                     // DETAIL_PICTURE:   '',
-                    NAME:             user_settings.NAME,
-                    PROPERTY_VALUES:  {
-                        test:      11,
-                        test1:     22,
-                        test_file: ''
-                    },
+                    DETAIL_TEXT:      JSON.stringify(data),
+                    // NAME:             user_settings.NAME,
                     // SECTION: 219
+                }, res => {
+                    console.log('b24.item_update RESULT', res.data());
+
+                    if (res.data())
+                        resolve(res);
+                    else
+                        console.log('b24.item_update ERROR', res);
                 });
             });
         },
@@ -151,10 +161,7 @@ settings.on({
         b24.entity_get()
             .catch(err => b24.entity_add().then(b24.item_add))
             .then(b24.item_get)
-            .then(result => {
-                user_settings = result[0];
-                console.log('user_settings', user_settings);
-
+            .then(() => {
                 control.trigger("init");
 
                 ymaps.ready(() => {
@@ -171,26 +178,26 @@ settings.on({
 
         b24.entity_delete()
             .then(() => {
-                user_settings = {};
-
                 b24.entity_add()
                     .then(b24.item_add)
-                    .then(b24.item_get)
-                    .then(result => {
-                        user_settings = result[0];
-                        console.log('user_settings', user_settings);
-                    });
-
+                    .then(b24.item_get);
             });
     },
 
     save() {
-        let select1 = settings.find('[name="date-settings"]').val(),
-            select2 = settings.find('[name="address-settings"]').val(),
-            chkbox = [];
+        let data = {
+            api:     {
+                type: settings.find('[name="access-method"]:checked').val(),
+                key:  settings.find('[name="api-key"]').val()
+            },
+            date:    settings.find('[name="date-settings"]').val(),
+            address: settings.find('[name="address-settings"]').val(),
+            fields:  []
+        };
 
-        settings.find('[name="user-fields"]:checked').map((i, elem) => chkbox.push($(elem).attr('id')));
-        console.log(select1, select2, chkbox);
+        settings.find('[name="user-fields"]:checked').map((i, elem) => data.fields.push($(elem).attr('id')));
+
+        b24.item_update(data).then(b24.item_get);
     },
 
     init_form() {
@@ -235,7 +242,6 @@ settings.on({
 <div><strong>Пользовательские поля:</strong><br>${data.chkbox[1]}</div>
 </div>`);
         });
-
 
     }
 });
