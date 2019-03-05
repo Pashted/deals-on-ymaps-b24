@@ -176,12 +176,13 @@ settings.on({
     reset() {
         console.log('settings.reset START');
 
-        b24.entity_delete()
-            .then(() => {
-                b24.entity_add()
-                    .then(b24.item_add)
-                    .then(b24.item_get);
-            });
+        // b24.entity_delete()
+        //     .then(() => {
+        //         b24.entity_add()
+        //             .then(b24.item_add)
+        //             .then(b24.item_get);
+        //     });
+        b24.item_update({}).then(b24.item_get);
     },
 
     save() {
