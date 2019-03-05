@@ -110,7 +110,7 @@ control.on({
          */
         settings.on({
             'show.uk.modal': () => {
-                console.log('user_settings', user_settings);
+                console.log('USER_SETTINGS', user_settings);
                 settings.trigger('init_form');
             },
             'hide.uk.modal': () => {

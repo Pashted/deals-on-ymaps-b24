@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Сделки на Яндекс-карте</title>
     <link type="text/css" rel="stylesheet" href="style/jquery-ui-1.10.3.custom.css">
-    <link type="text/css" rel="stylesheet" href="style/chosen.min.css">
     <link type="text/css" rel="stylesheet" href="style/style.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&amp;subset=cyrillic" rel="stylesheet">
 </head>
@@ -12,16 +11,8 @@
 
 <div class="map-control">
 
-    <!--<h4>Показывать:</h4>-->
-    <!--<input type="checkbox" id="leads"><label for="leads">Лиды</label>-->
-    <!--<input type="checkbox" id="deals" checked><label for="deals">Сделки</label>-->
-
-
     <h4>Фильтровать по статусу:</h4>
-    <!--<select id="select-leads-status" title="Доступные статусы лидов" multiple data-placeholder="Статусы лидов">-->
-    <!--</select>-->
-    <select id="select-deals-status" title="Доступные стадии сделок" multiple data-placeholder="Стадии сделок">
-    </select>
+    <select id="select-deals-status" title="Доступные стадии сделок" multiple data-placeholder="Стадии сделок"></select>
 
     <h4>Временной диапазон (по полю "дата уборки"):</h4>
     <input type="radio" name="date-filter" value="today" id="today" class="uk-radio"><label for="today">Сегодня</label>
@@ -91,6 +82,7 @@
         crossorigin="anonymous"></script>
 <script src="node_modules/uikit/dist/js/uikit.min.js"></script>
 <script src="node_modules/uikit/dist/js/uikit-icons.min.js"></script>
+<script src="node_modules/chosen-js/chosen.jquery.min.js"></script>
 <script src="js/jquery.datepicker.extension.range.min.js"></script>
 <script src="js/chosen.jquery.min.js"></script>
 <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
