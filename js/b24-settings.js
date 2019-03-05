@@ -8,7 +8,7 @@ let settings = $('#dealsonmap-settings'),
                 BX24.callMethod(
                     "entity.get",
                     {"ENTITY": entity_id},
-                    function (res) {
+                    res => {
                         console.log('entity.get RESULT', res.data());
 
                         if (res.error()) {
@@ -16,7 +16,7 @@ let settings = $('#dealsonmap-settings'),
                                 reject(res.answer.error);
 
                             else
-                                alert(`Произошла ошибка ${res.answer.error}. Обратитесь в тех. поддержку.`);
+                                console.log('b24.entity_get ERROR', res);
 
                         } else {
                             resolve();
@@ -29,7 +29,7 @@ let settings = $('#dealsonmap-settings'),
         entity_add() {
             console.log('b24.entity_add START');
 
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
                 BX24.callMethod('entity.add', {
                     'ENTITY': entity_id,
                     'NAME':   'Deals on map - settings',
@@ -37,12 +37,13 @@ let settings = $('#dealsonmap-settings'),
                         U1: 'W',
                         AU: 'R'
                     }
-                }, (res) => {
-                    console.log('entity.add RESULT', res.data());
+                }, res => {
+                    console.log('b24.entity_add RESULT', res.data());
+
                     if (res.data() === true)
                         resolve(res.data());
                     else
-                        alert('Произошла ошибка. Обратитесь в тех. поддержку.');
+                        console.log('b24.entity_add ERROR', res);
 
                 });
             });
@@ -51,8 +52,8 @@ let settings = $('#dealsonmap-settings'),
         entity_delete() {
             console.log('b24.entity_delete START');
 
-            return new Promise((resolve, reject) => {
-                BX24.callMethod('entity.delete', {'ENTITY': entity_id}, (res) => {
+            return new Promise(resolve => {
+                BX24.callMethod('entity.delete', {'ENTITY': entity_id}, res => {
                     console.log('b24.entity_delete RESULT', res.data());
                     resolve(res.data());
                 });
@@ -62,43 +63,43 @@ let settings = $('#dealsonmap-settings'),
         item_get() {
             console.log('b24.item_get START');
 
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
                 BX24.callMethod('entity.item.get', {
                     ENTITY: entity_id,
                     SORT:   {
                         DATE_ACTIVE_FROM: 'ASC',
                         ID:               'ASC'
                     }
-                }, (res) => {
+                }, res => {
                     console.log('b24.item_get RESULT', res.data());
+
                     if (res.data().length)
                         resolve(res.data());
-
                     else
-                        reject('no_items');
-
+                        console.log('b24.item_get ERROR', res);
                 });
             });
         },
 
         item_add() {
+            // TODO: добавить сюда default settings
             console.log('b24.item_add START');
 
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
                 BX24.callMethod('entity.item.add', {
                     ENTITY:           entity_id,
                     DATE_ACTIVE_FROM: new Date(),
-                    DETAIL_TEXT:      '{json}',
-                    DETAIL_PICTURE:   '',
+                    DETAIL_TEXT:      '{}',
+                    // DETAIL_PICTURE:   '',
                     NAME:             'Intels Deals on map settings'
                     // SECTION:          219
-                }, (res) => {
+                }, res => {
                     console.log('b24.item_add RESULT', res.data());
 
                     if (res.data())
                         resolve(res);
                     else
-                        reject('cant_add_item');
+                        console.log('b24.item_add ERROR', res);
                 });
             });
         },
@@ -106,13 +107,13 @@ let settings = $('#dealsonmap-settings'),
         item_update() {
             console.log('b24.item_update START');
 
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
                 BX24.callMethod('entity.item.update', {
                     ENTITY:           entity_id,
-                    ID:               842,
+                    ID:               user_settings.ID,
                     DATE_ACTIVE_FROM: new Date(),
-                    DETAIL_PICTURE:   '',
-                    NAME:             'Goodbye Cruel World',
+                    // DETAIL_PICTURE:   '',
+                    NAME:             user_settings.NAME,
                     PROPERTY_VALUES:  {
                         test:      11,
                         test1:     22,
@@ -120,6 +121,24 @@ let settings = $('#dealsonmap-settings'),
                     },
                     // SECTION: 219
                 });
+            });
+        },
+
+        get_fields() {
+            console.log('b24.get_fields START');
+
+            return new Promise(resolve => {
+                BX24.callMethod(
+                    "crm.deal.fields",
+                    {},
+                    res => {
+                        console.log('b24.get_fields RESULT', res.data());
+                        if (res.error())
+                            console.log('b24.get_fields ERROR', res);
+                        else
+                            resolve(res.data());
+                    }
+                );
             });
         }
     };
@@ -130,9 +149,9 @@ settings.on({
         console.log('settings.init START');
 
         b24.entity_get()
-            .catch(() => b24.entity_add().then(b24.item_add))
+            .catch(err => b24.entity_add().then(b24.item_add))
             .then(b24.item_get)
-            .then((result) => {
+            .then(result => {
                 user_settings = result[0];
                 console.log('user_settings', user_settings);
 
@@ -142,11 +161,13 @@ settings.on({
                     map.trigger('init');
                     deals_status_list.trigger('bx_update');
                 });
-            }, (error) => alert(`Произошла ошибка ${error}. Обратитесь в тех. поддержку.`));
+            });
 
         // .then(after_add => settings.trigger('init'));
     },
+
     reset() {
+        console.log('settings.reset START');
 
         b24.entity_delete()
             .then(() => {
@@ -155,49 +176,66 @@ settings.on({
                 b24.entity_add()
                     .then(b24.item_add)
                     .then(b24.item_get)
-                    .then((result) => {
+                    .then(result => {
                         user_settings = result[0];
                         console.log('user_settings', user_settings);
-                    }, (error) => alert(`Произошла ошибка ${error}. Обратитесь в тех. поддержку.`));
+                    });
 
             });
     },
+
     save() {
+        let select1 = settings.find('[name="date-settings"]').val(),
+            select2 = settings.find('[name="address-settings"]').val(),
+            chkbox = [];
 
+        settings.find('[name="user-fields"]:checked').map((i, elem) => chkbox.push($(elem).attr('id')));
+        console.log(select1, select2, chkbox);
     },
-    crm_fields() {
-        console.log('get_userfields START');
-        BX24.callMethod(
-            "crm.deal.fields",
-            {},
-            function (result) {
-                if (result.error()) {
-                    console.error(result.error());
+
+    init_form() {
+        console.log('settings.set_fields START');
+
+        b24.get_fields().then(result => {
+            let data = {
+                chkbox: ['', ''],
+                select: ['', '']
+            };
+
+            $.each(result, (id, field) => {
+
+                let label = field.formLabel ? field.formLabel : field.title,
+                    html = `<div>
+<input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox">
+<label for="${id}" uk-tooltip="${id} (${field.type})" class="uk-form-label">${label}</label>
+</div>`,
+                    option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`;
+
+                if (!field.formLabel) {
+                    data.chkbox[0] += html;
+                    data.select[0] += option;
                 } else {
-                    console.log(result.data());
-
-                    let html_system = '', html_user = '';
-                    $.each(result.data(), (id, field) => {
-                        if (field.formLabel)
-                            html_user += `<div>
-<input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox">
-<label for="${id}" uk-tooltip="${id} (${field.type})" class="uk-form-label">${field.formLabel}</label>
-</div>`;
-                        else
-                            html_system += `<div>
-<input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox">
-<label for="${id}" uk-tooltip="${id} (${field.type})" class="uk-form-label">${field.title}</label>
-</div>`;
-
-                    });
-
-                    $('.userfields-settings').html(`<div uk-grid>
-<div><strong>Системные поля:</strong><br>${html_system}</div>
-<div><strong>Пользовательские поля:</strong><br>${html_user}</div>
-</div>`);
-
+                    data.chkbox[1] += html;
+                    data.select[1] += option;
                 }
-            }
-        );
+            });
+            console.log('fields data', data);
+
+            // select 1, 2
+            settings.find('select')
+                .html(`<option value="">[по умолчанию]</option>
+<optgroup label="Системные поля">${data.select[0]}</optgroup>
+<optgroup label="Пользовательские поля">${data.select[1]}</optgroup>`)
+                .trigger("chosen:updated");
+
+            // checkboxes
+            $('.userfields-settings')
+                .html(`<div uk-grid>
+<div><strong>Системные поля:</strong><br>${data.chkbox[0]}</div>
+<div><strong>Пользовательские поля:</strong><br>${data.chkbox[1]}</div>
+</div>`);
+        });
+
+
     }
 });

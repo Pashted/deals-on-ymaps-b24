@@ -41,9 +41,10 @@ control.on({
         /**
          * Выпадающие списки
          */
-        control.find("select").chosen({
-            no_results_text: "Ничего не найдено!",
-            width:           "97%"
+        $("select").chosen({
+            no_results_text:         "Ничего не найдено!",
+            placeholder_text_single: 'Выберите из списка',
+            width:                   "250px"
         });
 
         /**
@@ -110,7 +111,7 @@ control.on({
         settings.on({
             'show.uk.modal': () => {
                 console.log('user_settings', user_settings);
-                settings.trigger('crm_fields');
+                settings.trigger('init_form');
             },
             'hide.uk.modal': () => {
             }
