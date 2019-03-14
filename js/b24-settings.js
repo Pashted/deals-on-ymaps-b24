@@ -7,7 +7,7 @@ let settings = $('#dealsonmap-settings'),
             return new Promise((resolve, reject) => {
                 BX24.callMethod(
                     "entity.get",
-                    {"ENTITY": entity_id},
+                    { "ENTITY": entity_id },
                     res => {
                         console.log('b24.entity_get RESULT', res.data());
 
@@ -53,7 +53,7 @@ let settings = $('#dealsonmap-settings'),
             console.log('b24.entity_delete START');
 
             return new Promise(resolve => {
-                BX24.callMethod('entity.delete', {'ENTITY': entity_id}, res => {
+                BX24.callMethod('entity.delete', { 'ENTITY': entity_id }, res => {
                     console.log('b24.entity_delete RESULT', res.data());
                     resolve(res.data());
                 });
@@ -182,7 +182,7 @@ settings.on({
         //             .then(b24.item_add)
         //             .then(b24.item_get);
         //     });
-        b24.item_update({}).then(b24.item_get);
+        b24.item_update({}).then(b24.item_get).then(() => settings.trigger('init_form'));
     },
 
     save() {
@@ -213,11 +213,11 @@ settings.on({
             $.each(result, (id, field) => {
 
                 let label = field.formLabel ? field.formLabel : field.title,
+                    option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`,
                     html = `<div>
-<input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox">
+<input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox" ${$.inArray(id, user_settings.fields) >= 0 ? 'checked="true"' : ''}>
 <label for="${id}" uk-tooltip="${id} (${field.type})" class="uk-form-label">${label}</label>
-</div>`,
-                    option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`;
+</div>`;
 
                 if (!field.formLabel) {
                     data.chkbox[0] += html;
@@ -227,14 +227,23 @@ settings.on({
                     data.select[1] += option;
                 }
             });
-            console.log('fields data', data);
+
 
             // select 1, 2
-            settings.find('select')
-                .html(`<option value="">[по умолчанию]</option>
-<optgroup label="Системные поля">${data.select[0]}</optgroup>
-<optgroup label="Пользовательские поля">${data.select[1]}</optgroup>`)
-                .trigger("chosen:updated");
+            let selects = settings.find('select');
+
+            selects.html(`<option value="">[по умолчанию]</option>
+<optgroup label="СИСТЕМНЫЕ ПОЛЯ">${data.select[0]}</optgroup>
+<optgroup label="ПОЛЬЗОВАТЕЛЬСКИЕ ПОЛЯ">${data.select[1]}</optgroup>`);
+
+            if (user_settings.date)
+                selects.filter('select[name="date-settings"]').val(user_settings.date);
+
+            if (user_settings.address)
+                selects.filter('select[name="address-settings"]').val(user_settings.address);
+
+            selects.trigger("chosen:updated");
+
 
             // checkboxes
             $('.userfields-settings')

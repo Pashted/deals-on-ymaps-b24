@@ -116,11 +116,11 @@
             }
         }
     }
-    
+
 }
 
 .uk-modal {
-    
+
     form {
         [type=radio] {
             &:not(:first-child) {
@@ -196,7 +196,7 @@
                 background: @blue;
                 color:      @white;
             }
-            
+
         }
         .ui-state-active {
             //border-radius: 0;
@@ -223,6 +223,11 @@
     }
     .ui-datepicker-week-end .ui-state-default {
         color: @red;
+    }
+    .selected-start, .selected-end {
+        &.ui-datepicker-today .ui-state-default {
+            box-shadow: 0 0 0 1px #fff, 0 0 0 2px @teal;
+        }
     }
 }
 
