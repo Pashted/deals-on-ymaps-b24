@@ -162,6 +162,7 @@ settings.on({
             .catch(err => b24.entity_add().then(b24.item_add))
             .then(b24.item_get)
             .then(() => {
+                settings.trigger('init_form');
                 control.trigger("init");
 
                 ymaps.ready(() => {
@@ -251,6 +252,16 @@ settings.on({
 <div><strong>Системные поля:</strong><br>${data.chkbox[0]}</div>
 <div><strong>Пользовательские поля:</strong><br>${data.chkbox[1]}</div>
 </div>`);
+
+            if (user_settings.api) {
+
+                if (typeof user_settings.api.type !== 'undefined')
+                    settings.find(`[name="access-method"][value="${user_settings.api.type}"]`).click();
+
+                if (typeof user_settings.api.key !== 'undefined')
+                    settings.find(`[name="api-key"]`).val(user_settings.api.key);
+            }
+
         });
 
     }

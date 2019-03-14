@@ -111,7 +111,7 @@ control.on({
         settings.on({
             'show.uk.modal': () => {
                 console.log('USER_SETTINGS', user_settings);
-                settings.trigger('init_form');
+                // settings.trigger('init_form');
             },
             'hide.uk.modal': () => {
             }

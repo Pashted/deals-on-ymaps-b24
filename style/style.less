@@ -225,8 +225,12 @@
         color: @red;
     }
     .selected-start, .selected-end {
-        &.ui-datepicker-today .ui-state-default {
-            box-shadow: 0 0 0 1px #fff, 0 0 0 2px @teal;
+        &.ui-datepicker-today {
+            z-index:  10;
+            position: relative;
+            .ui-state-default {
+                box-shadow: 0 0 0 1px #fff, 0 0 0 2px @teal;
+            }
         }
     }
 }
