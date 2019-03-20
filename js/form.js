@@ -58,7 +58,11 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             $('.reset-settings').click(
                 () => UIkit.modal.confirm('Это действие невозможно отменить. Вы действительно хотите удалить все настройки модуля?', { stack: true })
-                    .then(() => settings.reset().then(this.modal_init), () => console.log('reset promise rejected'))
+                    .then(
+                        () => settings.reset()
+                            .then(() => this.modal_init()),
+                        () => console.log('reset promise rejected')
+                    )
             );
 
         },
