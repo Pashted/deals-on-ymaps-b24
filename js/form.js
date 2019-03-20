@@ -47,10 +47,10 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             $('.api-settings [type=radio]').on({
                 change() {
-                    if ($(this).val() === '1')
-                        $('.api-settings [type=text]').prop('disabled', false).focus();
-                    else
-                        $('.api-settings [type=text]').prop('disabled', true);
+                    let val = $(this).val() !== '1';
+
+                    $('.api-settings [type=text]').prop('disabled', val).focus();
+                    $('.api-settings [type=checkbox]').prop('disabled', val);
                 }
             });
 
@@ -99,6 +99,10 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             b24.get_fields()
                 .then(result => {
+                    $('[name="access-method"]').eq(settings.user_settings.api_type).click();
+                    $('[name="api-key"]').val(settings.user_settings.api_key);
+                    $('[name="api-not-free"]').prop('checked', settings.user_settings.api_not_free);
+
                     let data = {
                         chkbox: ['', ''],
                         select: ['', '']
@@ -135,16 +139,11 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
 
                     // checkboxes
-                    $('.userfields-settings')
-                        .html(`<div uk-grid>
+                    $('.userfields-settings').html(`<div uk-grid>
 <div><strong>Системные поля:</strong><br>${data.chkbox[0]}</div>
 <div><strong>Пользовательские поля:</strong><br>${data.chkbox[1]}</div>
 </div>`);
 
-                    console.log('user_settings.api_type', settings.user_settings.api_type);
-
-                    $('[name="access-method"]').eq(settings.user_settings.api_type).click();
-                    $('[name="api-key"]').val(settings.user_settings.api_key);
                 });
 
         },

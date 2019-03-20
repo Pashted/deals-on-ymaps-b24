@@ -1,4 +1,4 @@
-define(['b24', 'date'], (b24, date) => {
+define(['b24'], b24 => {
     let settings = $('#dealsonmap-settings');
 
     return {
@@ -37,11 +37,12 @@ define(['b24', 'date'], (b24, date) => {
             console.log('settings.save START');
 
             let data = {
-                api_type: $('[name="access-method"]:checked').val(),
-                api_key:  $('[name="api-key"]').val(),
-                date:     $('[name="date-settings"]').val(),
-                address:  $('[name="address-settings"]').val(),
-                fields:   []
+                api_type:     $('[name="access-method"]:checked').val(),
+                api_key:      $('[name="api-key"]').val(),
+                api_not_free: $('[name="api-not-free"]:checked').length ? 1 : 0,
+                date:         $('[name="date-settings"]').val(),
+                address:      $('[name="address-settings"]').val(),
+                fields:       []
             };
 
             $('[name="user-fields"]:checked').map((i, elem) => data.fields.push($(elem).attr('id')));

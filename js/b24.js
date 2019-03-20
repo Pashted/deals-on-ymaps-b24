@@ -3,11 +3,12 @@ define(() => {
     let crm = `https://${BX24.getDomain()}/crm`, // адрес CRM Bitrix24
         entity_id = 'intelsdom', // имя хранилища для хранения настроек модуля в crm
         default_settings = {
-            api_type: 0,
-            api_key:  '',
-            date:     'DATE_CREATE',
-            address:  'LOCATION_ID',
-            fields:   ['ID', 'NAME']
+            api_type:     0,
+            api_key:      '',
+            api_not_free: 1,
+            date:         'DATE_CREATE',
+            address:      'LOCATION_ID',
+            fields:       ['ID', 'NAME']
         };
 
 // TODO: очищать в href контакта лишние символы регуляркой

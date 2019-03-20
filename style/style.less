@@ -119,16 +119,20 @@
 
 }
 
-.uk-modal {
-
+#dealsonmap-settings {
+    padding-top:    5px;
+    padding-bottom: 5px;
     form {
         [type=radio] {
             &:not(:first-child) {
                 margin-left: 30px;
             }
-            &:not(:checked) + label + [type=text] {
-                opacity: .5;
+            &:not(:checked) + label + p {
+                display: none;
             }
+        }
+        [type=text] {
+            margin-bottom: 10px;
         }
     }
 }
