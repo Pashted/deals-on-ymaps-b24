@@ -99,9 +99,9 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             b24.get_fields()
                 .then(result => {
-                    $('[name="access-method"]').eq(settings.user_settings.api_type).click();
-                    $('[name="api-key"]').val(settings.user_settings.api_key);
-                    $('[name="api-not-free"]').prop('checked', settings.user_settings.api_not_free);
+                    $('[name="access-method"]').eq(settings.user.api_type).click();
+                    $('[name="api-key"]').val(settings.user.api_key);
+                    $('[name="api-not-free"]').prop('checked', settings.user.api_not_free);
 
                     let data = {
                         chkbox: ['', ''],
@@ -113,7 +113,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                         let label = field.formLabel ? field.formLabel : field.title,
                             option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`,
                             html = `<div>
-<input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox" ${$.inArray(id, settings.user_settings.fields) >= 0 ? 'checked="true"' : ''}>
+<input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox" ${$.inArray(id, settings.user.fields) >= 0 ? 'checked="true"' : ''}>
 <label for="${id}" uk-tooltip="${id} (${field.type})" class="uk-form-label">${label}</label>
 </div>`;
 
@@ -133,8 +133,8 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                     selects.html(`<optgroup label="СИСТЕМНЫЕ ПОЛЯ">${data.select[0]}</optgroup>` +
                         `<optgroup label="ПОЛЬЗОВАТЕЛЬСКИЕ ПОЛЯ">${data.select[1]}</optgroup>`);
 
-                    selects.filter('[name="date-settings"]').val(settings.user_settings.date);
-                    selects.filter('[name="address-settings"]').val(settings.user_settings.address);
+                    selects.filter('[name="date-settings"]').val(settings.user.date);
+                    selects.filter('[name="address-settings"]').val(settings.user.address);
                     selects.trigger("chosen:updated");
 
 
@@ -169,8 +169,8 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                  */
                 let filter = { date: {} },
                     val1 = date.start.val(),
-                    date_param = settings.user_settings.date,
-                    addr_param = settings.user_settings.address;
+                    date_param = settings.user.date,
+                    addr_param = settings.user.address;
 
                 if (val1)
                     filter.date['>' + date_param] = val1;
@@ -282,7 +282,6 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                         },
                         () => resolve()
                     );
-
 
             });
         }

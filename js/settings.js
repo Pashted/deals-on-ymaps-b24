@@ -2,7 +2,15 @@ define(['b24'], b24 => {
     let settings = $('#dealsonmap-settings');
 
     return {
-        user_settings: {},
+        user:    {},
+        defaults: {
+            api_type:     0,
+            api_key:      '',
+            api_not_free: 1,
+            date:         'DATE_CREATE',
+            address:      'LOCATION_ID',
+            fields:       ['ID', 'NAME']
+        },
 
         init() {
             return new Promise(resolve => {
@@ -12,8 +20,9 @@ define(['b24'], b24 => {
                     .catch(err => b24.entity_add().then(b24.item_add))
                     .then(() => b24.item_get())
                     .then(user_settings => {
-                        this.user_settings = user_settings;
-                        console.log('settings.INIT RESULT', this.user_settings);
+                        this.user = user_settings;
+                        this.user.__proto__ = this.defaults;
+                        console.log('settings.INIT RESULT', this.user);
                         resolve();
                     });
             });
@@ -23,11 +32,12 @@ define(['b24'], b24 => {
             return new Promise(resolve => {
                 console.log('settings.reset START');
 
-                b24.item_update({ api_key: this.user_settings.api_key })
+                b24.item_update({ api_key: this.user.api_key })
                     .then(() => b24.item_get())
                     .then(user_settings => {
-                        this.user_settings = user_settings;
-                        console.log('settings.RESET RESULT', this.user_settings);
+                        this.user = user_settings;
+                        this.user.__proto__ = this.defaults;
+                        console.log('settings.RESET RESULT', this.user);
                         resolve();
                     });
             });
@@ -50,8 +60,9 @@ define(['b24'], b24 => {
             b24.item_update(data)
                 .then(() => b24.item_get())
                 .then(user_settings => {
-                    this.user_settings = user_settings;
-                    console.log('settings.SAVE RESULT', this.user_settings);
+                    this.user = user_settings;
+                    this.user.__proto__ = this.defaults;
+                    console.log('settings.SAVE RESULT', this.user);
                 });
         },
     }

@@ -1,15 +1,7 @@
 define(() => {
 
     let crm = `https://${BX24.getDomain()}/crm`, // адрес CRM Bitrix24
-        entity_id = 'intelsdom', // имя хранилища для хранения настроек модуля в crm
-        default_settings = {
-            api_type:     0,
-            api_key:      '',
-            api_not_free: 1,
-            date:         'DATE_CREATE',
-            address:      'LOCATION_ID',
-            fields:       ['ID', 'NAME']
-        };
+        entity_id = 'intelsdom'; // имя хранилища для хранения настроек модуля в crm
 
 // TODO: очищать в href контакта лишние символы регуляркой
 // TODO: сделать показ более 50 контактов на одной карте, либо показывать сообщение вместо undefined в контактах, которые есть, но не были получены
@@ -19,6 +11,7 @@ define(() => {
         crm,
         statuses:    {},
         settings_id: null,
+
         get_fields() {
             return new Promise(resolve => {
                 console.log('b24.get_fields START');
@@ -181,8 +174,6 @@ define(() => {
 
                     if (data.length) {
                         let user_settings = JSON.parse(data[0].DETAIL_TEXT);
-                        user_settings.__proto__ = default_settings;
-
                         this.settings_id = data[0].ID;
 
                         resolve(user_settings);
