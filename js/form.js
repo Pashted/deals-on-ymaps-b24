@@ -16,6 +16,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
         log:           $('#log'),
         statuses_list: $('#select-deals-status'),
         statuses:      {},
+        field_names:   {},
 
         init() {
             console.log('form.init START');
@@ -114,12 +115,14 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
                     $.each(result, (id, field) => {
 
-                        let label = field.formLabel ? field.formLabel : field.title,
+                        let label = field.formLabel || field.title,
                             option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`,
                             html = `<div>
 <input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox" ${$.inArray(id, settings.user.fields) >= 0 ? 'checked="true"' : ''}>
 <label for="${id}" uk-tooltip="${id} (${field.type})" class="uk-form-label">${label}</label>
 </div>`;
+
+                        this.field_names[id] = label;
 
                         if (!field.formLabel) {
                             data.chkbox[0] += html;
@@ -229,8 +232,8 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                                     'balloonContentHeader': `${el.TITLE}, ID ${el.ID}`,
                                     'balloonContentBody':   `<p><a href="${b24.crm}/deal/details/${el.ID}/" target="_blank">Открыть сделку в новом окне</a></p>
                             <p style="color:#1bad03"><b>Стадия сделки:</b> ${this.statuses[el.STAGE_ID] !== undefined ? this.statuses[el.STAGE_ID] : el.STAGE_ID}</p>
-                            <p><b>Адрес:</b> ${address}</p>
-                            <p><b>Дата сделки:</b> ${date.format_date(el[date_param])}</p>`,
+                            <p><b>${this.field_names[settings.user.address]}:</b> ${address}</p>
+                            <p><b>${this.field_names[settings.user.date]}:</b> ${date.format_date(el[date_param])}</p>`,
                                 },
                                 "contact":    el.CONTACT_ID
                             });
