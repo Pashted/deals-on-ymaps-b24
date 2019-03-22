@@ -1,21 +1,47 @@
 define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings, UIkit) => {
 
-    let format_phones = (phones) => {
-        let result = "";
+    let field_names = {},
+        format_phones = phones => {
+            let result = "";
 
-        $.each(phones, function (i, phone) {
-            let tel = phones.length === 1 ? "" : " " + (i + 1);
-            result += `<b>Телефон${tel}:</b> <a href='tel:${phone.VALUE.replace(/[^0-9+]/, "")}'>${phone.VALUE}</a><br>`;
-        });
+            $.each(phones, function (i, phone) {
+                let tel = phones.length === 1 ? "" : " " + (i + 1);
+                result += `<b>Телефон${tel}:</b> <a href='tel:${phone.VALUE.replace(/[^0-9+]/, "")}'>${phone.VALUE}</a><br>`;
+            });
 
-        return result;
-    };
+            return result;
+        },
+        format_dot = elem => {
+            console.log("crm.deal.list:elem", elem);
+
+            let address = elem[settings.user.address].split('|')[0],
+                _date = date.format_date(elem[settings.user.date]),
+                result = {
+                    "type":       "Feature",
+                    "id":         elem.ID,
+                    "geometry":   { "type": "Point" },
+                    "icon":       "darkGreenDotIcon",
+                    "address":    address,
+                    "properties": {
+                        'iconCaption':        `#${elem.ID} - ${_date}`,
+                        'clusterCaption':     `#${elem.ID} - ${_date}`,
+                        // 'balloonContentHeader': ,
+                        'balloonContentBody': `<h4>${elem.TITLE}</h4>
+                            <p><a href="${b24.crm}/deal/details/${elem.ID}/" target="_blank">Открыть сделку в новом окне</a></p>
+                            <p style="color:#1bad03"><b>Стадия сделки:</b> ${b24.statuses[elem.STAGE_ID] !== undefined ? b24.statuses[elem.STAGE_ID] : elem.STAGE_ID}</p>
+                            <p><b>${field_names[settings.user.address]}:</b> ${address}</p>
+                            <p><b>${field_names[settings.user.date]}:</b> ${_date}</p>`,
+                    },
+                    "contact":    elem.CONTACT_ID
+                };
+
+            return result;
+        };
 
     return {
         reload_btn:    $('.reload'),
         log:           $('#log'),
         statuses_list: $('#select-deals-status'),
-        field_names:   {},
 
         init() {
             console.log('form.init START');
@@ -76,16 +102,14 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             this.set_deals()
                 .then(() => {
+                    this.log.append(`Сделок в CRM: <b>${map.dots.length}</b>`);
+
                     this.reload_btn.text('Загрузка контактов...');
-                    return this.set_contacts();
-                })
-                .then(count => {
+                    this.set_contacts()
+                        .then(count => {
+                            let warn = count > 50 ? `<span style='color:red'> - поддерживается не более 50!</span>` : '';
+                            this.log.append(` (связанных контактов: <b>${count + warn}</b>)`);
 
-                    let warn = count > 50 ? `<span style='color:red'> - поддерживается не более 50!</span>` : '';
-                    this.log.append(`Сделок в CRM: <b>${map.dots.length}</b> (связанных контактов: <b>${count + warn}</b>)`);
-
-                    ymaps.ready(() => {
-                        if (map.dots.length) {
                             this.reload_btn.text('Поиск объектов на карте...');
 
                             map.set_coords()
@@ -105,12 +129,12 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                                 })
                                 .then(() => this.reload_btn.removeClass('loading').text('Применить'));
 
-                        } else {
-                            this.reload_btn.removeClass('loading').text('Применить');
-                            this.log.append(`Ничего не найдено.`);
-                        }
-                    });
 
+                        });
+
+                }, reject => {
+                    this.log.append(reject);
+                    this.reload_btn.removeClass('loading').text('Применить');
                 });
         },
 
@@ -137,7 +161,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 <label for="${id}" uk-tooltip="${id} (${field.type})" class="uk-form-label">${label}</label>
 </div>`;
 
-                        this.field_names[id] = label;
+                        field_names[id] = label;
 
                         if (!field.formLabel) {
                             data.chkbox[0] += html;
@@ -187,8 +211,9 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
         },
 
         set_deals() {
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
                 console.log('form.set_deals START');
+
                 /**
                  * фильтр по полю start_date
                  */
@@ -213,62 +238,46 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                         // сохранение в браузере последних настроек фильтра по статусу сделок
                         settings.save_ls({ status_filter: filter.status });
 
-                        $.each(deals, (i, el) => {
-                            if (!el[addr_param] || !el[date_param]) {
-                                console.log(`SKIP DEAL #${el.ID}: не хватает даты или адреса`, el);
+                        $.each(deals, (i, elem) => {
+                            if (!elem[addr_param] || !elem[date_param]) {
+                                console.log(`SKIP DEAL #${elem.ID}: не хватает даты или адреса`, elem);
                                 return;
                             }
 
                             /**
                              * фильтр по стадиям сделок
                              */
-                            if (filter.status.length && $.inArray(el.STAGE_ID, filter.status) < 0) {
-                                console.log(`SKIP DEAL #${el.ID} by STAGE_ID FILTER`, el.STAGE_ID);
+                            if (filter.status.length && $.inArray(elem.STAGE_ID, filter.status) < 0) {
+                                console.log(`SKIP DEAL #${elem.ID} by STAGE_ID FILTER`, elem.STAGE_ID);
                                 return;
                             }
-                            // фильтр "окончание периода"
+                            /**
+                             * фильтр "окончание периода"
+                             */
                             if (val2) {
-                                let deal_time = Date.parse(el[date_param]);
+                                let deal_time = Date.parse(elem[date_param]);
                                 if (deal_time > val2) {
 
-                                    console.log(`SKIP DEAL #${el.ID} by EndDate FILTER`, deal_time, ">", val2);
+                                    console.log(`SKIP DEAL #${elem.ID} by EndDate FILTER`, deal_time, ">", val2, elem);
                                     return;
                                 }
                             }
-                            console.log("crm.deal.list:el", el);
 
-                            // Поле "адрес google"
-                            let address = el[addr_param].split('|')[0];
-
-                            map.dots.push({
-                                "type":       "Feature",
-                                "id":         el.ID,
-                                "geometry":   { "type": "Point" },
-                                "icon":       "darkGreenDotIcon",
-                                "address":    address,
-                                "properties": {
-                                    'iconCaption':          `${el.TITLE}, ID ${el.ID}`,
-                                    'clusterCaption':       `${el.TITLE}, ID ${el.ID}`,
-                                    'balloonContentHeader': `${el.TITLE}, ID ${el.ID}`,
-                                    'balloonContentBody':   `<p><a href="${b24.crm}/deal/details/${el.ID}/" target="_blank">Открыть сделку в новом окне</a></p>
-                            <p style="color:#1bad03"><b>Стадия сделки:</b> ${b24.statuses[el.STAGE_ID] !== undefined ? b24.statuses[el.STAGE_ID] : el.STAGE_ID}</p>
-                            <p><b>${this.field_names[settings.user.address]}:</b> ${address}</p>
-                            <p><b>${this.field_names[settings.user.date]}:</b> ${date.format_date(el[date_param])}</p>`,
-                                },
-                                "contact":    el.CONTACT_ID
-                            });
-
+                            map.dots.push(format_dot(elem));
                         });
 
-                        resolve();
+                        if (map.dots.length)
+                            resolve();
+                        else
+                            reject('Ничего не найдено');
                     });
             });
 
         },
 
+
         set_contacts() {
             return new Promise(resolve => {
-
                 console.log('form.set_contacts START', 'map.dots', map.dots);
 
                 let batch = {}; // пакет запросов для b24
@@ -293,7 +302,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                                     return;
 
                                 let contact = contacts['contact_' + deal.contact].data();
-                                map.dots[i].balloon += `<b>Связанный контакт:</b> 
+                                map.dots[i].properties.balloonContentBody += `<b>Связанный контакт:</b> 
                                                 <a href="${b24.crm}/contact/details/${contact.ID}/" target="_blank">${contact.NAME}</a><br>
                                                 ${format_phones(contact.PHONE)}`;
                             });
