@@ -94,7 +94,7 @@ define(() => {
                 if (count) {
                     BX24.callBatch(batch, result => {
                         console.log('b24.get_contacts RESULT', result);
-                        resolve(result, count);
+                        resolve(result);
                     });
 
                 } else {

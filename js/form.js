@@ -84,8 +84,9 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                             this.reload_btn.text('Поиск объектов на карте...');
 
                             map.set_coords()
-                                .then(() => {
+                                .then((i) => {
                                     this.reload_btn.text('Добавление объектов на карту...');
+                                    this.log.append(`<br>Сделок на карте:<b>${i}</b>.`);
                                     return map.add_dots();
                                 })
                                 .then(() => this.reload_btn.removeClass('loading').text('Применить'));
@@ -267,7 +268,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
 
                 b24.get_contacts(batch)
-                    .then((contacts, count) => {
+                    .then((contacts) => {
                             $.each(map.dots, (i, deal) => {
                                 if (deal.contact === null)
                                     return;
@@ -278,11 +279,13 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                                                 ${format_phones(contact.PHONE)}`;
                             });
 
-                            let res = '';
+                            let res = '',
+                                count = Object.keys(contacts).length;
+
                             if (count > 50)
                                 res = `<span style='color:red'>${count} (поддерживается не более 50!)</span>`;
 
-                            this.log.append(`Найдено сделок: <b>${map.dots.length}</b>,<br>связанных с ними контактов: <b>${res}</b>.`);
+                            this.log.append(`Сделок в CRM: <b>${map.dots.length}</b>,<br>связанных с ними контактов: <b>${count}</b>.`);
 
                             resolve();
 
