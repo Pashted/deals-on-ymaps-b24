@@ -23,6 +23,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
             date.init();
             this.modal_init();
 
+
             /**
              * Выпадающие списки
              */
@@ -42,6 +43,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                 this.log.text('');
                 console.clear();
                 map.clear();
+
                 this.search();
             });
 
@@ -167,7 +169,10 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                 b24.get_statuses()
                     .then(statuses => {
                         $.each(statuses, (id, st) => this.statuses_list.append(`<option value="${id}">${st}</option>`));
-                        this.statuses_list.trigger("chosen:updated");
+
+                        // выбор статусов, сохраненных ранее в браузере
+                        this.statuses_list.val(settings.ls.status_filter).trigger("chosen:updated");
+
                         resolve();
                     });
             });
@@ -197,6 +202,8 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                             val2 = Date.parse(date.end.val()) + timezone_offset + 86400000; // +3 часа и +1 день, чтобы искать до конца дня, указанного в конце диапазона
                         filter.status = this.statuses_list.val();
 
+                        // сохранение в браузере последних настроек фильтра по статусу сделок
+                        settings.save_ls({ status_filter: filter.status });
 
                         $.each(deals, (i, el) => {
                             if (!el[addr_param] || !el[date_param]) {

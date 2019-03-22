@@ -20,7 +20,7 @@ define(() => {
 
                             this.dots[i].properties.balloonContentFooter = `<hr><i>Координаты Yandex: ${this.dots[i].geometry.coordinates}</i>`;
 
-                            timer = setTimeout(() => resolve(), 2000);
+                            timer = setTimeout(() => resolve(), 1000);
 
                         });
                 }

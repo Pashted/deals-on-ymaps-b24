@@ -1,10 +1,13 @@
 define(['b24'], b24 => {
-    let settings = $('#dealsonmap-settings');
+    let settings = $('#dealsonmap-settings'),
+        ls_name = "intels_deals_on_map",
+        ls;
 
     //TODO: сохранять/загружать по init фильтр по статусам в хранилище
 
     return {
-        user:    {},
+        user:     {},
+        ls:       {},
         defaults: {
             api_type:     0,
             api_key:      '',
@@ -14,9 +17,29 @@ define(['b24'], b24 => {
             fields:       ['ID', 'NAME']
         },
 
+        save_ls(params) {
+            console.log('settings.save_ls', params);
+            localStorage.setItem(ls_name, JSON.stringify(params));
+        },
+
+        init_ls() {
+            this.ls = localStorage.getItem(ls_name);
+
+            if (this.ls === null) {
+                this.ls = { status_filter: [] };
+                localStorage.setItem(ls_name, JSON.stringify(this.ls));
+
+            } else {
+                this.ls = JSON.parse(this.ls);
+            }
+            console.log('settings.init_ls', this.ls);
+        },
+
         init() {
             return new Promise(resolve => {
                 console.log('settings.init START');
+
+                this.init_ls();
 
                 b24.entity_get()
                     .catch(err => b24.entity_add().then(b24.item_add))
