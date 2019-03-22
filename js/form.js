@@ -79,20 +79,28 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                     this.reload_btn.text('Загрузка контактов...');
                     return this.set_contacts();
                 })
-                .then(() => {
+                .then(count => {
+
+                    let warn = count > 50 ? `<span style='color:red'> - поддерживается не более 50!</span>` : '';
+                    this.log.append(`Сделок в CRM: <b>${map.dots.length}</b> (связанных контактов: <b>${count + warn}</b>)`);
+
                     ymaps.ready(() => {
                         if (map.dots.length) {
                             this.reload_btn.text('Поиск объектов на карте...');
 
                             map.set_coords()
                                 .then(() => {
+                                    let not_found = map.check_dots(),
+                                        text = `<br>Сделок на карте: <b>${map.dots.length}</b>.`;
+
+                                    if (not_found.length)
+                                        text += ` <span style='color:red'>Ненайденных адресов: <b>${not_found.length}</b>.<br>${not_found.join('<br>')}</span>`;
+
+                                    text = text.replace(/\[\[(\d+)]]/g, `<a href="${b24.crm}/deal/details/$1/" target="_blank">#$1</a>`);
+
+                                    this.log.append(text);
+
                                     this.reload_btn.text('Добавление объектов на карту...');
-
-                                    let check_result = map.check_dots()
-                                        .replace(/\[\[(\d+)\]\]/g, `<a href="${b24.crm}/deal/details/$1/" target="_blank">#$1</a>`);
-
-                                    this.log.append(check_result);
-
                                     return map.add_dots();
                                 })
                                 .then(() => this.reload_btn.removeClass('loading').text('Применить'));
@@ -290,18 +298,10 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                                                 ${format_phones(contact.PHONE)}`;
                             });
 
-                            let res = '',
-                                count = Object.keys(contacts).length;
-
-                            if (count > 50)
-                                res = `<span style='color:red'>${count} (поддерживается не более 50!)</span>`;
-
-                            this.log.append(`Сделок в CRM: <b>${map.dots.length}</b> (связанных контактов: <b>${count}</b>)`);
-
-                            resolve();
+                            resolve(Object.keys(contacts).length);
 
                         },
-                        () => resolve()
+                        () => resolve(0)
                     );
 
             });

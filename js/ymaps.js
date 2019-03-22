@@ -41,13 +41,7 @@ define(() => {
                 this.dots.splice(i, 1);
             }
 
-            let log = `<br>Сделок на карте: <b>${this.dots.length}</b>.`;
-
-            if (not_found.length)
-                log += ` <span style='color:red'>Ненайденных адресов: <b>${not_found.length}</b>.<br>${not_found.join('<br>')}</span>`;
-
-
-            return log;
+            return not_found;
         },
 
         add_dots() {
