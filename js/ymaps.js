@@ -36,7 +36,7 @@ define(() => {
                     continue;
 
                 // ненайденные точки на карте помещаем в массив для лога и отменяем вывод их на карту
-                not_found.push(`#${this.dots[i].id}: ${this.dots[i].address}`);
+                not_found.push(`[[${this.dots[i].id}]]: ${this.dots[i].address}`);
 
                 this.dots.splice(i, 1);
             }
@@ -44,7 +44,7 @@ define(() => {
             let log = `<br>Сделок на карте: <b>${this.dots.length}</b>.`;
 
             if (not_found.length)
-                log += ` <span style='color:red'>Не найденных адресов <b>${not_found.length}</b>:<br>${not_found.join('<br>')}</span>`;
+                log += ` <span style='color:red'>Ненайденных адресов: <b>${not_found.length}</b>.<br>${not_found.join('<br>')}</span>`;
 
 
             return log;

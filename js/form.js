@@ -88,7 +88,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                                     this.reload_btn.text('Добавление объектов на карту...');
 
                                     let check_result = map.check_dots()
-                                        .replace(/#(\d+)/g, `<a href="${b24.crm}/deal/details/$1/" target="_blank">#$1</a>`);
+                                        .replace(/\[\[(\d+)\]\]/g, `<a href="${b24.crm}/deal/details/$1/" target="_blank">#$1</a>`);
 
                                     this.log.append(check_result);
 
