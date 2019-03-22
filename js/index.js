@@ -38,7 +38,7 @@ require(
                                     map.init_map();
                                     form.init();
                                     form.status_list_init()
-                                        .then(() => form.search());
+                                        // .then(() => form.search());
                                 }
                             )
                         )

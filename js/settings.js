@@ -1,6 +1,8 @@
 define(['b24'], b24 => {
     let settings = $('#dealsonmap-settings');
 
+    //TODO: сохранять/загружать по init фильтр по статусам в хранилище
+
     return {
         user:    {},
         defaults: {
