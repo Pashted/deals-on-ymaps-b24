@@ -1,3 +1,16 @@
+@import "../node_modules/chosen-js/chosen.css";
+@import "../node_modules/uikit/src/less/components/_import";
+
+@internal-nav-parent-close-image: "../node_modules/uikit/src/images/backgrounds/nav-parent-close.svg";
+@internal-nav-parent-open-image: "../node_modules/uikit/src/images/backgrounds/nav-parent-open.svg";
+@internal-form-select-image: "../node_modules/uikit/src/images/backgrounds/form-select.svg";
+@internal-form-radio-image: "../node_modules/uikit/src/images/backgrounds/form-radio.svg";
+@internal-form-checkbox-image: "../node_modules/uikit/src/images/backgrounds/form-checkbox.svg";
+@internal-form-checkbox-indeterminate-image: "../node_modules/uikit/src/images/backgrounds/form-checkbox-indeterminate.svg";
+@internal-list-bullet-image: "../node_modules/uikit/src/images/backgrounds/list-bullet.svg";
+@internal-divider-icon-image: "../node_modules/uikit/src/images/backgrounds/divider-icon.svg";
+@global-font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
 @primary-color: #99d033;
 @font-family: "Open Sans", Helvetica, Arial, sans-serif;
 
@@ -47,33 +60,40 @@
         &:first-child {
             margin-top: 0;
         }
-        
+    }
+    h4:not(:first-child) {
+        margin-top: 20px;
     }
     button {
-        padding:     6px 10px;
-        font-family: @font-family;
-        border:      1px solid fade(black, 10%);
-        cursor:      pointer;
-        outline:     none;
-        background:  @primary-color;
-        color:       #222222;
-        &:hover {
-            background: lighten(@primary-color, 7%);
-        }
-        &.loading, &:active {
-            background: #f0f0f0;
-            color:      #999999;
-            cursor:     default;
-        }
+        //padding:     6px 10px;
+        //font-family: @font-family;
+        //cursor:      pointer;
+        //outline:     none;
+        //border:      1px solid fade(black, 10%);
         &.reload {
-            margin-top: 20px;
+            //margin-top: 20px;
+            //background: @primary-color;
+            //color:      #222222;
+            //&:hover {
+            //    background: lighten(@primary-color, 7%);
+            //}
+            &.loading, &:active {
+                background: #f0f0f0;
+                color:      #999999;
+                cursor:     default;
+            }
+        }
+        &.uk-button-default {
+            padding: 0 10px;
         }
     }
+    .uk-icon {
+        vertical-align: text-top;
+    }
     #log {
-        color:          #999999;
-        display:        inline-block;
-        vertical-align: middle;
-        margin-left:    10px;
+        color:   #333;
+        display: block;
+        margin:  0 0 5px;
     }
     label {
         display:        inline-block;
@@ -98,7 +118,25 @@
             }
         }
     }
-    
+
+}
+
+#dealsonmap-settings {
+    padding-top:    5px;
+    padding-bottom: 5px;
+    form {
+        [type=radio] {
+            &:not(:first-child) {
+                margin-left: 30px;
+            }
+            &:not(:checked) + label + p {
+                display: none;
+            }
+        }
+        [type=text] {
+            margin-bottom: 10px;
+        }
+    }
 }
 
 .ui-widget {
@@ -123,7 +161,7 @@
 
 .ui-datepicker {
     width:   340px;
-    padding: 10px 10px 5px;
+    padding: 5px 4px 0px 5px;
     .ui-datepicker-header {
         color:       @text;
         font-weight: 400;
@@ -158,13 +196,13 @@
             color:         @grey;
             box-sizing:    border-box;
             border-radius: 0;
-            line-height:   35px;
-            padding: 3px;
+            line-height:   30px;
+            padding:       3px;
             &:hover, &.is-active {
                 background: @blue;
                 color:      @white;
             }
-            
+
         }
         .ui-state-active {
             //border-radius: 0;
@@ -192,9 +230,22 @@
     .ui-datepicker-week-end .ui-state-default {
         color: @red;
     }
+    .selected-start, .selected-end {
+        &.ui-datepicker-today {
+            z-index:  10;
+            position: relative;
+            .ui-state-default {
+                box-shadow: 0 0 0 1px #fff, 0 0 0 2px @teal;
+            }
+        }
+    }
 }
 
 .chosen-container {
     vertical-align: top;
-    min-width:      48%;
+    min-width:      250px;
+}
+
+#select_deals_status_chosen {
+    width: 97% !important;
 }
