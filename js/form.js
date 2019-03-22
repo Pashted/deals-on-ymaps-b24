@@ -15,7 +15,6 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
         reload_btn:    $('.reload'),
         log:           $('#log'),
         statuses_list: $('#select-deals-status'),
-        statuses:      {},
         field_names:   {},
 
         init() {
@@ -237,7 +236,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                                     'clusterCaption':       `${el.TITLE}, ID ${el.ID}`,
                                     'balloonContentHeader': `${el.TITLE}, ID ${el.ID}`,
                                     'balloonContentBody':   `<p><a href="${b24.crm}/deal/details/${el.ID}/" target="_blank">Открыть сделку в новом окне</a></p>
-                            <p style="color:#1bad03"><b>Стадия сделки:</b> ${this.statuses[el.STAGE_ID] !== undefined ? this.statuses[el.STAGE_ID] : el.STAGE_ID}</p>
+                            <p style="color:#1bad03"><b>Стадия сделки:</b> ${b24.statuses[el.STAGE_ID] !== undefined ? b24.statuses[el.STAGE_ID] : el.STAGE_ID}</p>
                             <p><b>${this.field_names[settings.user.address]}:</b> ${address}</p>
                             <p><b>${this.field_names[settings.user.date]}:</b> ${date.format_date(el[date_param])}</p>`,
                                 },
