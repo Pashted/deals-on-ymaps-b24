@@ -18,8 +18,9 @@ define(['b24'], b24 => {
         },
 
         save_ls(params) {
-            console.log('settings.save_ls', params);
-            localStorage.setItem(ls_name, JSON.stringify(params));
+            console.log('settings.save_ls', params, this.ls);
+            if (params !== this.ls)
+                localStorage.setItem(ls_name, JSON.stringify(params));
         },
 
         init_ls() {
