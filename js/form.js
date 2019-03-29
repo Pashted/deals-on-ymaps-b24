@@ -14,26 +14,35 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
         format_dot = elem => {
             console.log("crm.deal.list:elem", elem);
 
-            let address = elem[settings.user.address].split('|')[0],
+            let _address = elem[settings.user.address].split('|')[0],
                 _date = date.format_date(elem[settings.user.date]),
                 result = {
                     "type":       "Feature",
                     "id":         elem.ID,
                     "geometry":   { "type": "Point" },
                     "icon":       "darkGreenDotIcon",
-                    "address":    address,
+                    "address":    _address,
                     "properties": {
                         'iconCaption':        `#${elem.ID} - ${_date}`,
                         'clusterCaption':     `#${elem.ID} - ${_date}`,
                         // 'balloonContentHeader': ,
                         'balloonContentBody': `<h4>${elem.TITLE}</h4>
-                            <p><a href="${b24.crm}/deal/details/${elem.ID}/" target="_blank">Открыть сделку в новом окне</a></p>
+                            <p><b><a href="${b24.crm}/deal/details/${elem.ID}/" target="_blank">Открыть сделку в новом окне</a></b></p>
                             <p style="color:#1bad03"><b>Стадия сделки:</b> ${b24.statuses[elem.STAGE_ID] !== undefined ? b24.statuses[elem.STAGE_ID] : elem.STAGE_ID}</p>
-                            <p><b>${field_names[settings.user.address]}:</b> ${address}</p>
+                            
+                            <p><b>ID:</b> #${elem.ID}</p>
+                            <p><b>${field_names[settings.user.address]}:</b> ${_address}</p>
                             <p><b>${field_names[settings.user.date]}:</b> ${_date}</p>`,
                     },
                     "contact":    elem.CONTACT_ID
                 };
+
+            if (elem.LEAD_ID > 0)
+                result.properties.balloonContentBody += `<p><b><a href="${b24.crm}/lead/details/${elem.LEAD_ID}/" target="_blank">Связанный лид</a></b></p>`;
+
+            if (elem.COMPANY_ID > 0)
+                result.properties.balloonContentBody += `<p><b><a href="${b24.crm}/company/details/${elem.COMPANY_ID}/" target="_blank">Связанная компания</a></b></p>`;
+
 
             return result;
         };
@@ -68,6 +77,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
                 this.log.text('');
                 console.clear();
+                console.log('SETTINGS', settings);
                 map.clear();
 
                 this.search();
