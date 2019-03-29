@@ -174,28 +174,19 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                     $('[name="api-key"]').val(settings.user.api_key);
                     $('[name="api-not-free"]').prop('checked', settings.user.api_not_free);
 
-                    let data = {
-                        chkbox: ['', ''],
-                        select: ['', '']
-                    };
+                    let data = ['', ''];
 
                     $.each(result, (id, field) => {
 
                         let label = field.formLabel || field.title,
-                            option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`,
-                            html = `<div>
-<input type="checkbox" name="user-fields" value="${id}" id="${id}" class="uk-checkbox" ${$.inArray(id, settings.user.fields) >= 0 ? 'checked="true"' : ''}>
-<label for="${id}" uk-tooltip="${id} (${field.type})" class="uk-form-label">${label}</label>
-</div>`;
+                            option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`;
 
                         field_names[id] = label;
 
                         if (!field.formLabel) {
-                            data.chkbox[0] += html;
-                            data.select[0] += option;
+                            data[0] += option;
                         } else {
-                            data.chkbox[1] += html;
-                            data.select[1] += option;
+                            data[1] += option;
                         }
                     });
 
@@ -203,19 +194,12 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                     // select 1, 2
                     let selects = $('.uk-modal select');
 
-                    selects.html(`<optgroup label="СИСТЕМНЫЕ ПОЛЯ">${data.select[0]}</optgroup>` +
-                        `<optgroup label="ПОЛЬЗОВАТЕЛЬСКИЕ ПОЛЯ">${data.select[1]}</optgroup>`);
+                    selects.html(`<optgroup label="СИСТЕМНЫЕ ПОЛЯ">${data[0]}</optgroup>` +
+                        `<optgroup label="ПОЛЬЗОВАТЕЛЬСКИЕ ПОЛЯ">${data[1]}</optgroup>`);
 
                     selects.filter('[name="date-settings"]').val(settings.user.date);
                     selects.filter('[name="address-settings"]').val(settings.user.address);
                     selects.trigger("chosen:updated");
-
-
-                    // checkboxes
-                    $('.userfields-settings').html(`<div uk-grid>
-<div><strong>Системные поля:</strong><br>${data.chkbox[0]}</div>
-<div><strong>Пользовательские поля:</strong><br>${data.chkbox[1]}</div>
-</div>`);
 
                 });
 

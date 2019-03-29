@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<div id="dealsonmap-settings" class="uk-modal-container" uk-modal>
+<div id="dealsonmap-settings" uk-modal>
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-default" type="button" uk-close></button>
         <div class="uk-modal-body" uk-overflow-auto>
@@ -46,16 +46,18 @@
                     <label for="access-method-1">По API-ключу</label>
 
                     <p><input type="text" name="api-key" class="uk-input uk-width-1-3" placeholder="Вставьте API-ключ сюда" disabled><br>
-                    <input type="checkbox" name="api-not-free" id="api-not-free" class="uk-checkbox" value="1" checked>
-                    <label for="api-not-free">Мой ключ является платным</label>
+                        <input type="checkbox" name="api-not-free" id="api-not-free" class="uk-checkbox" value="1" checked>
+                        <label for="api-not-free">Мой ключ является платным</label>
                     </p>
                 </div>
 
                 <h4>Фильтр</h4>
-                <p>Поле, содержащее <strong>дату</strong>, по которой происходит фильтрация: <select name="date-settings"></select></p>
-                <p>Поле, содержащее <strong>адрес</strong>, по которому выполняется поиск на карте: <select name="address-settings"></select></p>
-                <h4>Показывать эти поля в элементах на карте</h4>
-                <div class="userfields-settings"></div>
+                <p>Поле, содержащее <strong>дату</strong>, по которой происходит фильтрация:<br>
+                    <select name="date-settings"></select>
+                </p>
+                <p>Поле, содержащее <strong>адрес</strong>, по которому выполняется поиск на карте:<br>
+                    <select name="address-settings"></select>
+                </p>
             </form>
         </div>
         <div class="uk-modal-footer">
