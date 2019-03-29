@@ -93,31 +93,44 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
             });
 
 
-            let close_btn = $('#dealsonmap-settings .uk-modal-footer .uk-modal-close'),
-                save_btn = $('.save-settings');
+            let save_btn = $('.save-settings'),
+                close_btn = $('.uk-modal-footer .uk-modal-close'),
+                spinner = '<div uk-spinner="ratio:0.5"></div>';
 
             save_btn.click(
                 () => {
-                    if (save_btn.hasClass('saving'))
+                    if (save_btn.hasClass('loading'))
                         return false;
 
-                    save_btn.addClass('saving').append('<div uk-spinner="ratio:0.5"></div>');
+                    save_btn.addClass('loading').append(spinner);
                     settings.save()
                         .then(() => {
                             close_btn.trigger('click');
-                            save_btn.removeClass('saving').find('div').remove();
-                            // window.location.reload(false);
-                        })
+                            save_btn.removeClass('loading').find('div').remove();
+                        });
                 }
             );
 
-            $('.reset-settings').click(
-                () => UIkit.modal.confirm('Это действие невозможно отменить. Вы действительно хотите удалить все настройки модуля?', { stack: true })
-                    .then(
-                        () => settings.reset()
-                            .then(() => this.modal_init()),
-                        () => console.log('reset promise rejected')
-                    )
+            let reset_btn = $('.reset-settings');
+
+            reset_btn.click(
+                () => {
+                    if (reset_btn.hasClass('loading'))
+                        return false;
+
+                    UIkit.modal.confirm('Это действие невозможно отменить. Вы действительно хотите удалить все настройки модуля?', { stack: true })
+                        .then(
+                            () => {
+                                reset_btn.addClass('loading').append(spinner);
+                                settings.reset()
+                                    .then(() => {
+                                        this.modal_init();
+                                        reset_btn.removeClass('loading').find('div').remove();
+                                    });
+                            },
+                            () => console.log('reset promise rejected')
+                        );
+                }
             );
 
         },
