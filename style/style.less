@@ -78,9 +78,10 @@
             //    background: lighten(@primary-color, 7%);
             //}
             &.loading, &:active {
-                background: #f0f0f0;
-                color:      #999999;
-                cursor:     default;
+                //background: #f0f0f0;
+                //color:      #999999;
+                cursor:  default;
+                opacity: .6;
             }
         }
         &.uk-button-default {
@@ -135,6 +136,13 @@
         }
         [type=text] {
             margin-bottom: 10px;
+        }
+    }
+    .save-settings.saving {
+        opacity: .6;
+        cursor:  default;
+        div {
+            margin-left: 5px;
         }
     }
 }

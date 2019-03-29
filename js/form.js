@@ -92,7 +92,24 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                 }
             });
 
-            $('.save-settings').click(() => settings.save());
+
+            let close_btn = $('#dealsonmap-settings .uk-modal-footer .uk-modal-close'),
+                save_btn = $('.save-settings');
+
+            save_btn.click(
+                () => {
+                    if (save_btn.hasClass('saving'))
+                        return false;
+
+                    save_btn.addClass('saving').append('<div uk-spinner="ratio:0.5"></div>');
+                    settings.save()
+                        .then(() => {
+                            close_btn.trigger('click');
+                            save_btn.removeClass('saving').find('div').remove();
+                            // window.location.reload(false);
+                        })
+                }
+            );
 
             $('.reset-settings').click(
                 () => UIkit.modal.confirm('Это действие невозможно отменить. Вы действительно хотите удалить все настройки модуля?', { stack: true })
