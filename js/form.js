@@ -56,7 +56,10 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
             console.log('form.init START');
 
             date.init();
+            map.init_map();
             this.modal_init();
+            this.status_list_init()
+                .then(() => this.search());
 
 
             /**
