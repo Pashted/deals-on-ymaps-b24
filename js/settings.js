@@ -1,7 +1,5 @@
 define(['b24'], b24 => {
-    let settings = $('#dealsonmap-settings'),
-        ls_name = "intels_deals_on_map",
-        ls;
+    let ls_name = "intels_deals_on_map";
 
     //TODO: сохранять/загружать по init фильтр по статусам в хранилище
 
@@ -18,9 +16,10 @@ define(['b24'], b24 => {
         },
 
         save_ls(params) {
-            console.log('settings.save_ls', params, this.ls);
-            if (params !== this.ls)
+            if (params !== this.ls) {
+                console.log('settings.save_ls', params, this.ls);
                 localStorage.setItem(ls_name, JSON.stringify(params));
+            }
         },
 
         init_ls() {
@@ -71,26 +70,26 @@ define(['b24'], b24 => {
         },
 
         save() {
-            console.log('settings.save START');
+            return new Promise(resolve => {
+                console.log('settings.save START');
 
-            let data = {
-                api_type:     $('[name="access-method"]:checked').val(),
-                api_key:      $('[name="api-key"]').val(),
-                api_not_free: $('[name="api-not-free"]:checked').length ? 1 : 0,
-                date:         $('[name="date-settings"]').val(),
-                address:      $('[name="address-settings"]').val(),
-                fields:       []
-            };
+                let data = {
+                    api_type:     $('[name="access-method"]:checked').val(),
+                    api_key:      $('[name="api-key"]').val(),
+                    api_not_free: $('[name="api-not-free"]:checked').length ? 1 : 0,
+                    date:         $('[name="date-settings"]').val(),
+                    address:      $('[name="address-settings"]').val()
+                };
 
-            $('[name="user-fields"]:checked').map((i, elem) => data.fields.push($(elem).attr('id')));
-
-            b24.item_update(data)
-                .then(() => b24.item_get())
-                .then(user_settings => {
-                    this.user = user_settings;
-                    this.user.__proto__ = this.defaults;
-                    console.log('settings.SAVE RESULT', this.user);
-                });
+                b24.item_update(data)
+                    .then(() => b24.item_get())
+                    .then(user_settings => {
+                        this.user = user_settings;
+                        this.user.__proto__ = this.defaults;
+                        console.log('settings.SAVE RESULT', this.user);
+                        resolve();
+                    });
+            });
         },
     }
 });
