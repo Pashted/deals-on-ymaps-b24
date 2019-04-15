@@ -4,26 +4,42 @@ define(() => {
 
     return {
         Map: {}, objectManager: {}, dots: [],
+
+        search_address(i) {
+            return new Promise(resolve => {
+                let timeout = setTimeout(() => {
+                    console.log('>> PROMISE TIMEOUT');
+                    resolve();
+                }, 2000);
+
+
+                ymaps.geocode(this.dots[i].address, { results: 1 })
+                    .then(result => {
+
+                        // Выбираем первый результат геокодирования.
+                        this.dots[i].geometry.coordinates = result.geoObjects.get(0).geometry.getCoordinates();
+                        console.log(i + '_coords', this.dots[i].geometry.coordinates, this.dots[i].id, this.dots[i].address);
+
+                        this.dots[i].properties.balloonContentFooter = `<hr><i>Координаты Yandex: ${this.dots[i].geometry.coordinates}</i>`;
+                        clearTimeout(timeout);
+
+                        console.log('>> PROMISE result', result);
+                        resolve();
+
+                    });
+            })
+        },
+
         set_coords() {
             return new Promise(resolve => {
                 console.log('map.set_coords START');
 
-                let timer;
+                let p = Promise.resolve(null);
 
                 for (let i = 0; i < this.dots.length; i++) {
-                    ymaps.geocode(this.dots[i].address, { results: 1 })
-                        .then(res => {
-                            clearTimeout(timer);
-                            // Выбираем первый результат геокодирования.
-                            this.dots[i].geometry.coordinates = res.geoObjects.get(0).geometry.getCoordinates();
-                            console.log(i + '_coords', this.dots[i].geometry.coordinates, this.dots[i].id, this.dots[i].address);
-
-                            this.dots[i].properties.balloonContentFooter = `<hr><i>Координаты Yandex: ${this.dots[i].geometry.coordinates}</i>`;
-
-                            timer = setTimeout(() => resolve(), 1000);
-
-                        });
+                    p = p.then(() => this.search_address(i));
                 }
+                p.then(() => setTimeout(() => resolve(), 100));
 
             });
         },
@@ -32,6 +48,7 @@ define(() => {
             let not_found = [];
 
             for (let i = 0; i < this.dots.length; i++) {
+                console.log('>> CHECK COORDS', this.dots[i].geometry.coordinates);
                 if (this.dots[i].geometry.coordinates !== undefined)
                     continue;
 
@@ -40,12 +57,12 @@ define(() => {
 
                 this.dots.splice(i, 1);
             }
-
+            console.log('>> NOT FOUND', not_found);
             return not_found;
         },
 
         add_dots() {
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
                 console.log('map.add_dots START');
                 /**
                  * Добавление точек на карту
