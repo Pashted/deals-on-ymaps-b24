@@ -10,7 +10,7 @@ define(() => {
                 let timeout = setTimeout(() => {
                     console.log('>> PROMISE TIMEOUT');
                     resolve();
-                }, 1000);
+                }, 2000);
 
 
                 ymaps.geocode(this.dots[i].address, { results: 1 })
@@ -42,7 +42,7 @@ define(() => {
                         return this.search_address(i);
                     });
                 }
-                p.then(() => resolve());
+                p.then(() => setTimeout(() => resolve(), 300));
 
             });
         },
