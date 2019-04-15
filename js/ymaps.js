@@ -10,12 +10,12 @@ define(['uikit', 'b24'], (UIkit, b24) => {
                 let timeout = setTimeout(() => {
 
                     UIkit.notification({
-                        message: `Не найдено:
-<a href="${b24.crm}/deal/details/${this.dots[i].id}/" target="_blank">#${this.dots[i].id}</a><br>`
-                                     + this.dots[i].address,
+                        message: `<strong>Не найдено:
+<a href="${b24.crm}/deal/details/${this.dots[i].id}/" target="_blank">#${this.dots[i].id}</a></strong>
+<br>` + this.dots[i].address,
                         status:  'primary',
                         pos:     'top-left',
-                        timeout: 7000
+                        timeout: 5000
                     });
 
                     console.log('>> PROMISE TIMEOUT');
