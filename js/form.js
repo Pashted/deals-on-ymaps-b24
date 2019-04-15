@@ -155,7 +155,9 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
                             this.reload_btn.text('Поиск объектов на карте...');
 
-                            map.set_coords()
+                            let progress = $(`<progress class="uk-progress" value="0" max="${map.dots.length}"></progress>`).appendTo(this.log);
+
+                            map.set_coords(progress)
                                 .then(() => {
                                     let not_found = map.check_dots(),
                                         text = `<br>Сделок на карте: <b>${map.dots.length}</b>.`;
@@ -165,6 +167,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
                                     text = text.replace(/\[\[(\d+)]]/g, `<a href="${b24.crm}/deal/details/$1/" target="_blank">#$1</a>`);
 
+                                    progress.remove();
                                     this.log.append(text);
 
                                     this.reload_btn.text('Добавление объектов на карту...');

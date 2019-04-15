@@ -19,6 +19,8 @@ define(() => {
                     $this.start.val(extensionRange.startDateText);
                     $this.end.val(extensionRange.endDateText);
                     $this.date_filter.filter('[value="range"]').click();
+
+                    $('.reload').removeClass('loading').text('Применить');
                 },
                 showOtherMonths:   true,
                 selectOtherMonths: true
