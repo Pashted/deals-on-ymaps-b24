@@ -10,7 +10,7 @@ define(() => {
                 let timeout = setTimeout(() => {
                     console.log('>> PROMISE TIMEOUT');
                     resolve();
-                }, 2000);
+                }, 1000);
 
 
                 ymaps.geocode(this.dots[i].address, { results: 1 })
@@ -30,14 +30,17 @@ define(() => {
             })
         },
 
-        set_coords() {
+        set_coords(progress) {
             return new Promise(resolve => {
                 console.log('map.set_coords START');
 
                 let p = Promise.resolve(null);
 
                 for (let i = 0; i < this.dots.length; i++) {
-                    p = p.then(() => this.search_address(i));
+                    p = p.then(() => {
+                        progress.prop('value', i);
+                        return this.search_address(i);
+                    });
                 }
                 p.then(() => resolve());
 
