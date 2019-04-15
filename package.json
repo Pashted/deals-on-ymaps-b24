@@ -1,0 +1,27 @@
+{
+    "name": "deals-on-ymaps-b24",
+    "version": "1.0.0",
+    "description": "deals-on-ymaps-bitrix24",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Pashted/deals-on-ymaps-b24.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Pashted/deals-on-ymaps-b24/issues"
+    },
+    "homepage": "https://github.com/Pashted/deals-on-ymaps-b24#readme",
+    "dependencies": {
+        "chosen-js": "^1.8.7",
+        "uikit": "^3.0.3",
+        "requirejs": "^2.3.6",
+        "jquery": "^3.4.0",
+        "jquery-ui": "^1.12.1"
+    },
+    "devDependencies": {}
+}
