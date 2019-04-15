@@ -155,7 +155,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
                             this.reload_btn.text('Поиск объектов на карте...');
 
-                            let progress = $(`<progress class="uk-progress" value="0" max="${map.dots.length}"></progress>`).appendTo(this.log);
+                            let progress = $(`<progress class="uk-progress" value="0" max="${map.dots.length - 1}"></progress>`).appendTo(this.log);
 
                             map.set_coords(progress)
                                 .then(() => {
