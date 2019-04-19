@@ -23,7 +23,6 @@ define(['b24'], b24 => {
         },
 
         init_ls() {
-            // TODO: сделать хранение параметров фильтра в хранилище b24
             this.ls = localStorage.getItem(ls_name);
 
             if (this.ls === null) {

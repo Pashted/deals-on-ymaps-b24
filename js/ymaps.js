@@ -1,4 +1,4 @@
-define(() => {
+define(['uikit', 'b24'], (UIkit, b24) => {
 
 // TODO: Добавить возможность ввести свой api-ключ яндекс-карт + инструкция по получению ключа
 
@@ -8,9 +8,19 @@ define(() => {
         search_address(i) {
             return new Promise(resolve => {
                 let timeout = setTimeout(() => {
+
+                    UIkit.notification({
+                        message: `<strong>Не найдено:
+<a href="${b24.crm}/deal/details/${this.dots[i].id}/" target="_blank">#${this.dots[i].id}</a></strong>
+<br>` + this.dots[i].address,
+                        status:  'primary',
+                        pos:     'top-left',
+                        timeout: 5000
+                    });
+
                     console.log('>> PROMISE TIMEOUT');
                     resolve();
-                }, 1000);
+                }, 2000);
 
 
                 ymaps.geocode(this.dots[i].address, { results: 1 })
@@ -25,6 +35,7 @@ define(() => {
 
                         console.log('>> PROMISE result', result);
                         resolve();
+
 
                     });
             })
@@ -42,7 +53,7 @@ define(() => {
                         return this.search_address(i);
                     });
                 }
-                p.then(() => resolve());
+                p.then(() => setTimeout(() => resolve(), 300));
 
             });
         },
