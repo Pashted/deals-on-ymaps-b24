@@ -1,4 +1,4 @@
-define(['b24'], b24 => {
+define([ 'b24' ], b24 => {
     let ls_name = "intels_deals_on_map";
 
     //TODO: сохранять/загружать по init фильтр по статусам в хранилище
@@ -12,7 +12,8 @@ define(['b24'], b24 => {
             api_not_free: 1,
             date:         'DATE_CREATE',
             address:      'LOCATION_ID',
-            fields:       ['ID', 'NAME']
+            fields:       [ 'ID', 'NAME' ],
+            add_fields:   [],
         },
 
         save_ls(params) {
