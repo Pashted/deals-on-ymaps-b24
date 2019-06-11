@@ -11,6 +11,20 @@
 @internal-divider-icon-image: "../node_modules/uikit/src/images/backgrounds/divider-icon.svg";
 @global-font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
+@notification-message-background: @global-primary-background;
+@notification-message-primary-color: white;
+
+.hook-notification-message-primary {
+    a {
+        color:           white;
+        text-decoration: underline;
+        &:hover {
+            opacity:         .6;
+            text-decoration: none;
+        }
+    }
+}
+
 @primary-color: #99d033;
 @font-family: "Open Sans", Helvetica, Arial, sans-serif;
 
