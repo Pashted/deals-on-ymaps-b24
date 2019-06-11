@@ -26,13 +26,13 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                         'iconCaption':        `#${elem.ID} - ${_date}`,
                         'clusterCaption':     `#${elem.ID} - ${_date}`,
                         // 'balloonContentHeader': ,
-                        'balloonContentBody': `<h4>${elem.TITLE}</h4>
+                        'balloonContentBody': `<h4><b>ID:</b> #${elem.ID}</h4>
                             <p><b><a href="${b24.crm}/deal/details/${elem.ID}/" target="_blank">Открыть сделку в новом окне</a></b></p>
                             <p style="color:#1bad03"><b>Стадия сделки:</b> ${b24.statuses[elem.STAGE_ID] !== undefined ? b24.statuses[elem.STAGE_ID] : elem.STAGE_ID}</p>
-                            
-                            <p><b>ID:</b> #${elem.ID}</p>
-                            <p><b>${field_names[settings.user.address]}:</b> ${_address}</p>
-                            <p><b>${field_names[settings.user.date]}:</b> ${_date}</p>`,
+                            <p><b>${field_names[settings.user.date].name}:</b> ${_date}</p>
+                            #CONTACT#
+                            <p><b>${field_names[settings.user.address].name}:</b> ${_address}</p>
+`,
                     },
                     "contact":    elem.CONTACT_ID
                 };
@@ -42,6 +42,16 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             if (elem.COMPANY_ID > 0)
                 result.properties.balloonContentBody += `<p><b><a href="${b24.crm}/company/details/${elem.COMPANY_ID}/" target="_blank">Связанная компания</a></b></p>`;
+
+            for (let i = settings.user.add_fields.length - 1; i >= 0; i--) {
+
+                let text = elem[settings.user.add_fields[i]] || '&mdash;';
+
+                if (field_names[settings.user.add_fields[i]].items)
+                    text = b24.get_userfield_name(elem[settings.user.add_fields[i]], field_names[settings.user.add_fields[i]].items);
+
+                result.properties.balloonContentBody += `<p><b>${field_names[settings.user.add_fields[i]].name}:</b> ${text}</p>`;
+            }
 
 
             return result;
@@ -200,7 +210,10 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                         let label = field.formLabel || field.title,
                             option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`;
 
-                        field_names[id] = label;
+                        field_names[id] = {
+                            name:  label,
+                            items: field.items
+                        };
 
                         if (!field.formLabel) {
                             data[0] += option;
@@ -218,6 +231,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
                     selects.filter('[name="date-settings"]').val(settings.user.date);
                     selects.filter('[name="address-settings"]').val(settings.user.address);
+                    selects.filter('[name="additional-fields"]').val(settings.user.add_fields);
                     selects.trigger("chosen:updated");
 
                 });
@@ -332,9 +346,10 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                                     return;
 
                                 let contact = contacts['contact_' + deal.contact].data();
-                                map.dots[i].properties.balloonContentBody += `<b>Связанный контакт:</b> 
+                                map.dots[i].properties.balloonContentBody =
+                                    map.dots[i].properties.balloonContentBody.replace(/#CONTACT#/, `<b>Связанный контакт:</b> 
                                                 <a href="${b24.crm}/contact/details/${contact.ID}/" target="_blank">${contact.NAME}</a><br>
-                                                ${format_phones(contact.PHONE)}`;
+                                                ${format_phones(contact.PHONE)}`);
                             });
 
                             resolve(Object.keys(contacts).length);

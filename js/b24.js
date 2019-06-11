@@ -16,7 +16,7 @@ define(() => {
             return new Promise(resolve => {
                 console.log('b24.get_fields START');
 
-                BX24.callMethod("crm.deal.fields", {}, res => {
+                BX24.callMethod("crm.deal.fields", { "LANG": 'ru' }, res => {
                         console.log('b24.get_fields RESULT', res.data());
 
                         if (res.error())
@@ -26,6 +26,14 @@ define(() => {
                     }
                 );
             });
+        },
+
+        get_userfield_name(id, values) {
+            for (let i in values)
+                if (values[i].ID === id)
+                    return values[i].VALUE;
+
+            return id;
         },
 
         get_statuses() {

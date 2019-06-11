@@ -78,7 +78,8 @@ define([ 'b24' ], b24 => {
                     api_key:      $('[name="api-key"]').val(),
                     api_not_free: $('[name="api-not-free"]:checked').length ? 1 : 0,
                     date:         $('[name="date-settings"]').val(),
-                    address:      $('[name="address-settings"]').val()
+                    address:      $('[name="address-settings"]').val(),
+                    add_fields:   $('[name="additional-fields"]').val()
                 };
 
                 b24.item_update(data)
