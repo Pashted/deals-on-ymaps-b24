@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Сделки на Яндекс-карте</title>
-    <link type="text/css" rel="stylesheet" href="style/jquery-ui-1.10.3.custom.css">
     <link type="text/css" rel="stylesheet" href="style/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&amp;subset=cyrillic" rel="stylesheet">
 </head>
 <body>
 
 <div class="map-control">
 
-    <h4>Фильтровать по статусу:</h4>
+    <h4>Фильтр по стадии сделки</h4>
     <select id="select-deals-status" title="Доступные стадии сделок" multiple data-placeholder="Стадии сделок"></select>
 
-    <h4>Временной диапазон (по полю "дата уборки"):</h4>
+    <h4>Фильтр по дате</h4>
     <input type="radio" name="date-filter" value="today" id="today" class="uk-radio"><label for="today">Сегодня</label>
     <input type="radio" name="date-filter" value="tomorrow" id="tomorrow" class="uk-radio"><label for="tomorrow">Завтра</label>
     <input type="radio" name="date-filter" value="range" id="range" class="uk-radio"><label for="range">Указать вручную</label>
     <div id="date-range"></div>
-    <input name="startDate" uk-tooltip="Начало периода в формате год-месяц-день">
-    <input name="endDate" uk-tooltip="Окончание периода в формате год-месяц-день">
+    <input type="hidden" name="startDate" disabled>
+    <input type="hidden" name="endDate" disabled>
 
     <small id="log"></small>
 
@@ -45,7 +43,7 @@
                     <input type="radio" name="access-method" id="access-method-1" class="uk-radio" value="1">
                     <label for="access-method-1">По API-ключу</label>
 
-                    <p><input type="text" name="api-key" class="uk-input uk-width-1-3" placeholder="Вставьте API-ключ сюда" disabled><br>
+                    <p><input type="text" name="api-key" class="uk-input uk-width-2-3" placeholder="Вставьте API-ключ сюда" disabled><br>
                         <input type="checkbox" name="api-not-free" id="api-not-free" class="uk-checkbox" value="1" checked>
                         <label for="api-not-free">Мой ключ является платным</label>
                     </p>
@@ -58,6 +56,10 @@
                 <p>Поле, содержащее <strong>адрес</strong>, по которому выполняется поиск на карте:<br>
                     <select name="address-settings"></select>
                 </p>
+                <p>Дополнительные поля:<br>
+                    <select name="additional-fields" multiple></select>
+                </p>
+
             </form>
         </div>
         <div class="uk-modal-footer">
