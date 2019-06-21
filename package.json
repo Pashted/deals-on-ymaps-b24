@@ -4,7 +4,7 @@
     "description": "deals-on-ymaps-bitrix24",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "npx babel src --out-dir js --delete-dir-on-start"
     },
     "repository": {
         "type": "git",
@@ -21,7 +21,14 @@
         "uikit": "^3.0.3",
         "requirejs": "^2.3.6",
         "jquery": "^3.4.0",
-        "jquery-ui": "^1.12.1"
+        "jquery-ui": "^1.12.1",
+        "promise-polyfill": "^8.1.1"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "@babel/core": "^7.4.5",
+        "@babel/cli": "^7.4.4",
+        "@babel/preset-env": "^7.4.5",
+        "babel-preset-minify": "^0.5.0",
+        "babel-plugin-transform-remove-console": "^6.9.4"
+    }
 }
