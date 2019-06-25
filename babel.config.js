@@ -12,11 +12,11 @@ const presets = [
             useBuiltIns: false,
         },
     ],
-    [ "minify" ]
+    // [ "minify" ]
 
 ];
 const plugins = [
-    "transform-remove-console"
+    // "transform-remove-console"
 ];
 
 module.exports = {

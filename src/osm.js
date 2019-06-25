@@ -1,36 +1,33 @@
-// import Map from 'ol/Map';
-// import View from 'ol/View';
-// import TileLayer from 'ol/layer/Tile';
-// import XYZ from 'ol/source/XYZ';
+// import 'ol/ol.css';
+import { Map, View } from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
 
-define([
-    '../node_modules/ol/Map',
-    '../node_modules/ol/View',
-    '../node_modules/ol/layer/Tile',
-    '../node_modules/ol/source/XYZ'
-], (Map, View, TileLayer, XYZ) => {
 
-    // new Map({
-    //     target: 'map',
-    //     layers: [
-    //         new TileLayer({
-    //             source: new XYZ({
-    //                 url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    //             })
-    //         })
-    //     ],
-    //     view:   new View({
-    //         center: [ 0, 0 ],
-    //         zoom:   2
-    //     })
-    // });
+const init = () => {
+    console.log(3333);
 
-    console.log(Map)
+    const map = new Map({
+        target: 'map',
+        layers: [
+            new TileLayer({
+                source: new OSM()
+            })
+        ],
+        view:   new View({
+            center: [ 0, 0 ],
+            zoom:   0
+        })
+    });
 
-    return {
+    console.log(map)
 
-        init() {
-            console.log(123)
-        }
-    }
-});
+
+    return new Promise(resolve => {
+        setTimeout(() => resolve(), 100);
+    });
+
+};
+
+export { init };
+

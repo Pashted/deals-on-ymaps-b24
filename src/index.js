@@ -5,7 +5,7 @@
  */
 
 require.config({
-    baseUrl: 'js',
+    baseUrl: 'src',
     paths:   {
         jquery:                  '../node_modules/jquery/dist/jquery.min',
         chosen:                  '../node_modules/chosen-js/chosen.jquery.min',
@@ -16,13 +16,14 @@ require.config({
         '../version':            '../node_modules/jquery-ui/ui/version',
         datepicker_ext:          'jquery.datepicker.extension.range.min',
         bx_api:                  '//api.bitrix24.com/api/v1/?',
-        map:                     'ymaps',
-        // map:                     'osm',
+        // mapModule:                     'ymaps',
+        mapModule:               '../js/osm',
         polyfill:                '../node_modules/@babel/polyfill/dist/polyfill.min',
     },
     shim:    {
         chosen:         { deps: [ 'jquery' ] },
-        datepicker_ext: { deps: [ 'jquery', '../widgets/datepicker' ] }
+        datepicker_ext: { deps: [ 'jquery', '../widgets/datepicker' ] },
+        mapModule:      { deps: [ '../js/vendors' ] },
     }
 });
 
@@ -33,7 +34,8 @@ require(
 
         BX24.init(() => {
 
-            require([ 'settings', 'form', 'map' ], (settings, form, map) => {
+
+            require([ 'settings', 'form', 'mapModule' ], (settings, form, map) => {
 
                 settings.init()
                     .then(() => map.init())

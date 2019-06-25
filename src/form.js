@@ -1,4 +1,4 @@
-define([ 'b24', 'map', 'date', 'settings', 'uikit' ], (b24, map, date, settings, UIkit) => {
+define([ 'b24', 'mapModule', 'date', 'settings', 'uikit' ], (b24, map, date, settings, UIkit) => {
 
     let field_names = {},
 

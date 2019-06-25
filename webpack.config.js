@@ -17,24 +17,38 @@ module.exports = {
     entry:   { osm: './osm.js' },
 
     output: {
-        filename: '[name].js',
-        path:     path.resolve('./js'),
+        filename:       '[name].js',
+        path:           path.resolve('./js'),
+        library:        'mapModule',
+        libraryTarget:  'amd',
+        // umdNamedDefine: true
     },
 
     // resolve: {
     //     alias: {
-    //         'uikit-icons':          path.resolve('./node_modules/uikit/dist/js/uikit-icons'),
-    //         'highcharts/highstock': path.resolve(`./node_modules/highcharts/highstock.src.js`),
-    //         'timeframesMultiplies': path.resolve(`./components/storage/data/timeframes`),
+    //
+    //         jquery:                  '../node_modules/jquery/dist/jquery.min',
+    //         chosen:                  '../node_modules/chosen-js/chosen.jquery.min',
+    //         uikit:                   '../node_modules/uikit/dist/js/uikit.min',
+    //         uikiticons:              '../node_modules/uikit/dist/js/uikit-icons.min',
+    //         '../widgets/datepicker': '../node_modules/jquery-ui/ui/widgets/datepicker.js',
+    //         '../keycode':            '../node_modules/jquery-ui/ui/keycode.js',
+    //         '../version':            '../node_modules/jquery-ui/ui/version.js',
+    //         datepicker_ext:          './jquery.datepicker.extension.range.min.js',
+    //         bx_api:                  '//api.bitrix24.com/api/v1/?',
+    //         // map:                     'ymaps',
+    //         // ol:                      '../node_modules/ol',
+    //         map:                     '../js/osm',
+    //         polyfill:                '../node_modules/@babel/polyfill/dist/polyfill.min',
     //     }
     // },
 
     optimization: {
         splitChunks: {
             cacheGroups: {
-                OpenLayers: {
+                vendors: {
                     chunks:  'initial',
-                    name:    'OpenLayers',
+                    name:    'vendors',
                     test:    /node_modules/,
                     enforce: true
                 }
@@ -49,7 +63,11 @@ module.exports = {
                 test:    /\.js$/,
                 exclude: /(node_modules|bower_components)/,
                 use:     { loader: "babel-loader" }
-            }
+            },
+            // {
+            //     test: /bitrix24/,
+            //     use:  { loader: "url-loader" }
+            // }
         ]
     }
 
