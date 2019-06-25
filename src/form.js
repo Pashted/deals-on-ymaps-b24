@@ -1,6 +1,7 @@
-define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings, UIkit) => {
+define([ 'b24', 'map', 'date', 'settings', 'uikit' ], (b24, map, date, settings, UIkit) => {
 
     let field_names = {},
+
         format_phones = phones => {
             let result = "";
 
@@ -11,6 +12,51 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             return result;
         },
+
+        modal_init = () => {
+            console.log('form.modal_init START');
+
+            b24.get_fields()
+                .then(result => {
+                    $('[name="access-method"]').eq(settings.user.api_type).click();
+                    $('[name="api-key"]').val(settings.user.api_key);
+                    $('[name="api-not-free"]').prop('checked', settings.user.api_not_free);
+
+                    let data = [ '', '' ];
+
+                    $.each(result, (id, field) => {
+
+                        let label = field.formLabel || field.title,
+                            option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`;
+
+                        field_names[id] = {
+                            name:  label,
+                            items: field.items
+                        };
+
+                        if (!field.formLabel) {
+                            data[0] += option;
+                        } else {
+                            data[1] += option;
+                        }
+                    });
+
+
+                    // select 1, 2
+                    let selects = $('.uk-modal select');
+
+                    selects.html(`<optgroup label="СИСТЕМНЫЕ ПОЛЯ">${data[0]}</optgroup>` +
+                        `<optgroup label="ПОЛЬЗОВАТЕЛЬСКИЕ ПОЛЯ">${data[1]}</optgroup>`);
+
+                    selects.filter('[name="date-settings"]').val(settings.user.date);
+                    selects.filter('[name="address-settings"]').val(settings.user.address);
+                    selects.filter('[name="additional-fields"]').val(settings.user.add_fields);
+                    selects.trigger("chosen:updated");
+
+                });
+
+        },
+
         format_dot = elem => {
             console.log("crm.deal.list:elem", elem);
 
@@ -30,7 +76,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                             <p><b><a href="${b24.crm}/deal/details/${elem.ID}/" target="_blank">Открыть сделку в новом окне</a></b></p>
                             <p style="color:#1bad03"><b>Стадия сделки:</b> ${b24.statuses[elem.STAGE_ID] !== undefined ? b24.statuses[elem.STAGE_ID] : elem.STAGE_ID}</p>
                             <p><b>${field_names[settings.user.date].name}:</b> ${_date}</p>
-                            #CONTACT#
+                            #EMPTY_CONTACT#
                             <p><b>${field_names[settings.user.address].name}:</b> ${_address}</p>
 `,
                     },
@@ -67,7 +113,9 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             date.init();
             map.init_map();
-            this.modal_init();
+
+            modal_init();
+
             this.status_list_init()
                 .then(() => this.search());
 
@@ -84,7 +132,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
             /**
              * Кнопка перезагрузки карты
              */
-            this.reload_btn.on('click', () => {
+            this.reload_btn.click(() => {
                 if (this.reload_btn.hasClass('loading'))
                     return false;
 
@@ -105,46 +153,40 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
                 }
             });
 
-
             let save_btn = $('.save-settings'),
-                close_btn = $('.uk-modal-footer .uk-modal-close'),
-                spinner = '<div uk-spinner="ratio:0.5"></div>';
+                close_btn = $('.uk-modal-footer .uk-modal-close');
 
-            save_btn.click(
-                () => {
-                    if (save_btn.hasClass('loading'))
-                        return false;
+            save_btn.click(() => {
+                if (save_btn.hasClass('loading'))
+                    return false;
 
-                    save_btn.addClass('loading').append(spinner);
-                    settings.save()
-                        .then(() => {
-                            close_btn.trigger('click');
-                            save_btn.removeClass('loading').find('div').remove();
-                        });
-                }
-            );
+                save_btn.addClass('loading').append('<div uk-spinner="ratio:0.5"></div>');
+                settings.save()
+                    .then(() => {
+                        close_btn.trigger('click');
+                        save_btn.removeClass('loading').find('div').remove();
+                    });
+            });
 
             let reset_btn = $('.reset-settings');
 
-            reset_btn.click(
-                () => {
-                    if (reset_btn.hasClass('loading'))
-                        return false;
+            reset_btn.click(() => {
+                if (reset_btn.hasClass('loading'))
+                    return false;
 
-                    UIkit.modal.confirm('Это действие невозможно отменить. Вы действительно хотите удалить все настройки модуля?', { stack: true })
-                        .then(
-                            () => {
-                                reset_btn.addClass('loading').append(spinner);
-                                settings.reset()
-                                    .then(() => {
-                                        this.modal_init();
-                                        reset_btn.removeClass('loading').find('div').remove();
-                                    });
-                            },
-                            () => console.log('reset promise rejected')
-                        );
-                }
-            );
+                UIkit.modal.confirm('Это действие невозможно отменить. Вы действительно хотите удалить все настройки модуля?', { stack: true })
+                    .then(
+                        () => {
+                            reset_btn.addClass('loading').append(spinner);
+                            settings.reset()
+                                .then(() => {
+                                    this.modal_init();
+                                    reset_btn.removeClass('loading').find('div').remove();
+                                });
+                        },
+                        () => console.log('reset promise rejected')
+                    );
+            });
 
         },
 
@@ -153,89 +195,52 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
             this.reload_btn.addClass('loading').text('Загрузка сделок...');
 
+            let progress;
+
             this.set_deals()
+
                 .then(() => {
                     this.log.append(`Сделок в CRM: <b>${map.dots.length}</b>`);
-
                     this.reload_btn.text('Загрузка контактов...');
-                    this.set_contacts()
-                        .then(count => {
-                            let warn = count > 50 ? `<span style='color:red'> - поддерживается не более 50!</span>` : '';
-                            this.log.append(` (связанных контактов: <b>${count + warn}</b>)`);
+                    return this.set_contacts();
+                })
 
-                            this.reload_btn.text('Поиск объектов на карте...');
+                .then(count => {
+                    let warn = count > 50 ? `<span style='color:red'> - поддерживается не более 50!</span>` : '';
+                    this.log.append(` (связанных контактов: <b>${count + warn}</b>)`);
 
-                            let progress = $(`<progress class="uk-progress" value="0" max="${map.dots.length - 1}"></progress>`).appendTo(this.log);
+                    this.reload_btn.text('Поиск объектов на карте...');
 
-                            map.set_coords(progress)
-                                .then(() => {
-                                    let not_found = map.check_dots(),
-                                        text = `<br>Сделок на карте: <b>${map.dots.length}</b>.`;
+                    progress = $(`<progress class="uk-progress" value="0" max="${map.dots.length - 1}"></progress>`)
+                        .appendTo(this.log);
 
-                                    if (not_found.length)
-                                        text += ` <span style='color:red'>Ненайденных адресов: <b>${not_found.length}</b>.<br>${not_found.join('<br>')}</span>`;
+                    return map.set_coords(progress);
+                })
 
-                                    text = text.replace(/\[\[(\d+)]]/g, `<a href="${b24.crm}/deal/details/$1/" target="_blank">#$1</a>`);
+                .then(() => {
+                    let not_found = map.check_dots(),
+                        text = `<br>Сделок на карте: <b>${map.dots.length}</b>.`;
 
-                                    progress.remove();
-                                    this.log.append(text);
+                    if (not_found.length) {
+                        text += ` <span style='color:red'>Ненайденных адресов: <b>${not_found.length}</b>.<br>${not_found.join('<br>')}</span>`;
+                        text = text.replace(/\[\[(\d+)]]/g, `<a href="${b24.crm}/deal/details/$1/" target="_blank">#$1</a>`);
+                    }
 
-                                    this.reload_btn.text('Добавление объектов на карту...');
-                                    return map.add_dots();
-                                })
-                                .then(() => this.reload_btn.removeClass('loading').text('Применить'));
+                    progress.remove();
 
+                    this.log.append(text);
 
-                        });
+                    this.reload_btn.text('Добавление объектов на карту...');
 
-                }, reject => {
-                    this.log.append(reject);
+                    return map.add_dots();
+                })
+
+                .then(() => this.reload_btn.removeClass('loading').text('Применить'))
+
+                .catch(err => {
+                    this.log.append(err);
                     this.reload_btn.removeClass('loading').text('Применить');
                 });
-        },
-
-        modal_init() {
-            console.log('form.modal_init START');
-
-            b24.get_fields()
-                .then(result => {
-                    $('[name="access-method"]').eq(settings.user.api_type).click();
-                    $('[name="api-key"]').val(settings.user.api_key);
-                    $('[name="api-not-free"]').prop('checked', settings.user.api_not_free);
-
-                    let data = ['', ''];
-
-                    $.each(result, (id, field) => {
-
-                        let label = field.formLabel || field.title,
-                            option = `<option value="${id}" title="${id} (${field.type})">${label}</option>`;
-
-                        field_names[id] = {
-                            name:  label,
-                            items: field.items
-                        };
-
-                        if (!field.formLabel) {
-                            data[0] += option;
-                        } else {
-                            data[1] += option;
-                        }
-                    });
-
-
-                    // select 1, 2
-                    let selects = $('.uk-modal select');
-
-                    selects.html(`<optgroup label="СИСТЕМНЫЕ ПОЛЯ">${data[0]}</optgroup>` +
-                        `<optgroup label="ПОЛЬЗОВАТЕЛЬСКИЕ ПОЛЯ">${data[1]}</optgroup>`);
-
-                    selects.filter('[name="date-settings"]').val(settings.user.date);
-                    selects.filter('[name="address-settings"]').val(settings.user.address);
-                    selects.filter('[name="additional-fields"]').val(settings.user.add_fields);
-                    selects.trigger("chosen:updated");
-
-                });
-
         },
 
         status_list_init() {
@@ -347,7 +352,7 @@ define(['b24', 'ymaps', 'date', 'settings', 'uikit'], (b24, map, date, settings,
 
                                 let contact = contacts['contact_' + deal.contact].data();
                                 map.dots[i].properties.balloonContentBody =
-                                    map.dots[i].properties.balloonContentBody.replace(/#CONTACT#/, `<b>Связанный контакт:</b> 
+                                    map.dots[i].properties.balloonContentBody.replace(/#EMPTY_CONTACT#/, `<b>Связанный контакт:</b> 
                                                 <a href="${b24.crm}/contact/details/${contact.ID}/" target="_blank">${contact.NAME}</a><br>
                                                 ${format_phones(contact.PHONE)}`);
                             });

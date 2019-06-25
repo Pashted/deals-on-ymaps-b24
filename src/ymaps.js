@@ -1,4 +1,4 @@
-define(['uikit', 'b24'], (UIkit, b24) => {
+define([ 'uikit', 'settings', 'b24' ], (UIkit, settings, b24) => {
 
 // TODO: Добавить возможность ввести свой api-ключ яндекс-карт + инструкция по получению ключа
 
@@ -112,7 +112,7 @@ define(['uikit', 'b24'], (UIkit, b24) => {
             console.log("map.init_map START");
 
             this.Map = new ymaps.Map('map', {
-                center: [55.753994, 37.622093],
+                center: [ 55.753994, 37.622093 ],
                 zoom:   10
             });
 
@@ -132,6 +132,37 @@ define(['uikit', 'b24'], (UIkit, b24) => {
             this.dots = [];
             this.Map.geoObjects.removeAll();
             this.objectManager.removeAll();
+        },
+
+        init() {
+
+            let defaultApi = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU',
+                api = defaultApi;
+
+            if (settings.user.api_type > 0) {
+                api += '&apikey=' + settings.user.api_key;
+                if (settings.user.api_not_free)
+                    api = api.replace(/(api-maps)/, 'enterprise.$1');
+            }
+
+            return new Promise((resolve, reject) => {
+
+                require(
+                    [ api ],
+                    () => ymaps.ready(resolve),
+                    err => {
+                        UIkit.modal.alert(err.message);
+                        require(
+                            [ defaultApi ],
+                            () => ymaps.ready(resolve),
+                            err => {
+                                UIkit.modal.alert(err.message);
+                                reject(err.message);
+                            }
+                        );
+                    });
+            });
+
         }
     }
 });

@@ -16,8 +16,9 @@ require.config({
         '../version':            '../node_modules/jquery-ui/ui/version',
         datepicker_ext:          'jquery.datepicker.extension.range.min',
         bx_api:                  '//api.bitrix24.com/api/v1/?',
-        ymaps_api:               'https://api-maps.yandex.ru/2.1/?lang=ru_RU',
-        'promise-polyfill':      '../node_modules/promise-polyfill/dist/polyfill.min',
+        map:                     'ymaps',
+        // map:                     'osm',
+        polyfill:                '../node_modules/@babel/polyfill/dist/polyfill.min',
     },
     shim:    {
         chosen:         { deps: [ 'jquery' ] },
@@ -26,38 +27,18 @@ require.config({
 });
 
 require(
-    [ 'uikit', 'uikiticons', 'chosen', 'datepicker_ext', 'bx_api', 'promise-polyfill' ],
+    [ 'uikit', 'uikiticons', 'chosen', 'datepicker_ext', 'bx_api', 'polyfill' ],
     (UIkit, icons) => {
         icons(UIkit);
 
         BX24.init(() => {
-            require([ 'settings', 'form', 'ymaps' ], (settings, form, map) => {
+
+            require([ 'settings', 'form', 'map' ], (settings, form, map) => {
+
                 settings.init()
-                    .then(() => {
+                    .then(() => map.init())
+                    .then(() => form.init());
 
-                            let api = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
-
-                            if (settings.user.api_type > 0) {
-                                api += '&apikey=' + settings.user.api_key;
-                                if (settings.user.api_not_free)
-                                    api = api.replace(/(api-maps)/, 'enterprise.$1');
-                            }
-                            require(
-                                [ api ],
-                                () => ymaps.ready(() => form.init()),
-                                err => {
-                                    UIkit.modal.alert(err.message);
-                                    require(
-                                        [ 'ymaps_api' ],
-                                        () => ymaps.ready(() => form.init()),
-                                        err => {
-                                            UIkit.modal.alert(err.message);
-                                        }
-                                    );
-                                });
-
-                        }
-                    );
             });
         });
     }

@@ -22,7 +22,7 @@
         "requirejs": "^2.3.6",
         "jquery": "^3.4.0",
         "jquery-ui": "^1.12.1",
-        "promise-polyfill": "^8.1.1"
+        "@babel/polyfill": "^7.4.4"
     },
     "devDependencies": {
         "@babel/core": "^7.4.5",

@@ -1,8 +1,6 @@
 define([ 'b24' ], b24 => {
     let ls_name = "intels_deals_on_map";
 
-    //TODO: сохранять/загружать по init фильтр по статусам в хранилище
-
     return {
         user:     {},
         ls:       {},
